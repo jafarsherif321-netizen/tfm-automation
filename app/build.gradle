@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    //Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.35.0'
+
+    //TestNG 
+    testImplementation 'org.testng:testng:7.11.0'
+
+    //Apache POI
+    // .xls
+    implementation 'org.apache.poi:poi:5.4.1'
+    // .xlsx
+    implementation 'org.apache.poi:poi-ooxml:5.4.1'
+
+    //Extend Reports
+    
+}
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+
+
+test {
+    useTestNG() {
+        // Specif testng.xml
+        suites 'src/test/resources/testng.xml'
+        // Output folder for TestNG reports
+        outputDirectory = file("test-execution-result")
+
+        // Turn on default listeners
+        useDefaultListeners = true
+    }
+
+    // To display execution status in console
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed"
+        exceptionFormat "full" 
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+
+    afterSuite { desc, result ->
+        if (!desc.parent) { // will match the outermost suite
+            println "\n================= TEST EXECUTION SUMMARY =================>"
+            println "Total Tests   : ${result.testCount}"
+            println "Passed        : ${result.successfulTestCount}"
+            println "Failed        : ${result.failedTestCount}"
+            println "Skipped       : ${result.skippedTestCount}"
+            println "==========================================================>\n"
+        }
+    }
+
+    // Always run tests, even if Gradle thinks nothing changed - for incremental build
+    outputs.upToDateWhen { false }
+}
