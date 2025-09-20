@@ -1,8 +1,9 @@
-# IDEAL Automation Framework
+# TFM Automation Framework
 
 ## Overview
-This is a **Java + Gradle automation framework** for testing the [IDEAL](https://website.idealonline.app/) web application.  
-It supports **UI testing** using Selenium WebDriver, **API testing** using RestAssured, and **reporting** with ExtentReports.  
+
+This is a **Java + Gradle automation framework** for testing the TFM web application.
+It supports **UI testing** using Selenium WebDriver, **API testing** using RestAssured, and **reporting** with ExtentReports.
 
 The framework follows **Page Object Model (POM)** design, **TestNG** as the test runner, and **data-driven testing** using JSON files.
 
@@ -11,12 +12,12 @@ The framework follows **Page Object Model (POM)** design, **TestNG** as the test
 ## Folder Structure
 
 ```
-ideal-automation/
+tfm-automation/
 ├── build.gradle                  # Gradle build file
 ├── settings.gradle               # Gradle settings
 ├── src/
 │   ├── main/
-│   │   ├── java/com/ideal/automation/
+│   │   ├── java/com/tfm/automation/
 │   │   │   ├── config/          # ConfigReader, EnvironmentManager
 │   │   │   ├── core/            # BaseTest, BasePage
 │   │   │   ├── driver/          # DriverManager, WebDriver setup
@@ -25,7 +26,7 @@ ideal-automation/
 │   │   └── resources/
 │   │       ├── config.properties
 │   └── test/
-│       ├── java/com/ideal/automation/
+│       ├── java/com/tfm/automation/
 │       │   ├── pages/           # Page Objects (LoginPage, DashboardPage, etc.)
 │       │   ├── tests/
 │       │   │   ├── ui/          # UI test classes
@@ -43,9 +44,9 @@ ideal-automation/
 
 ## Prerequisites
 
-- **Java 21** (or compatible version)  
-- **Gradle** (wrapped or installed)  
-- IDE: **IntelliJ IDEA** or **VS Code**  
+- **Java 21** (or compatible version)
+- **Gradle** (wrapped or installed)
+- IDE: **IntelliJ IDEA** or **VS Code**
 - ChromeDriver (or driver for your browser) in PATH
 
 ---
@@ -56,7 +57,7 @@ ideal-automation/
 
 ```bash
 git clone https://github.com/your-repo/ideal-automation.git
-cd ideal-automation
+cd tfm-automation
 ```
 
 2. Build the project:
@@ -68,7 +69,7 @@ cd ideal-automation
 3. Ensure `config.properties` contains your environment info:
 
 ```properties
-baseUrl=https://website.idealonline.app/
+baseUrl=https://dev.trulyfree.com/
 browser=chrome
 timeout=10
 ```
@@ -86,47 +87,46 @@ timeout=10
 ### Run specific TestNG XML suite
 
 ```bash
-./gradlew test --tests "com.ideal.automation.tests.ui.LoginTest"
+./gradlew test --tests "com.tfm.automation.tests.ui.LoginTest"
 ```
 
 ## Adding Test Data
 
 - Place JSON, CSV, or Excel files in:
+
 ```
 src/test/resources/testdata/
 ```
+
 - Use `DataProvider` classes to read and feed tests dynamically.
+
 ---
 
 ## Reporting
 
-- ExtentReports generates **HTML reports** in `target/reports/extent/`  
+- ExtentReports generates **HTML reports** in `target/reports/extent/`
 - Configure report path in `reporting/ExtentManager.java`
 
 ---
 
 ## Code Conventions
 
-- **Packages/folders** are lowercase  
-- **Page classes** under `pages/`  
-- **Test classes** under `tests/ui` or `tests/api`  
-- **Data providers** under `dataprovider/`  
-- **Reusable utilities** under `utils/`  
-
+- **Packages/folders** are lowercase
+- **Page classes** under `pages/`
+- **Test classes** under `tests/ui` or `tests/api`
+- **Data providers** under `dataprovider/`
+- **Reusable utilities** under `utils/`
 
 ## Components integrated so far
 
 - **Created framework and pushed to GitHub**
 - **added dependencies(selenium, testing, poi)**
 - **added xml file and verified if it is working fine for parallel and cross browser testing**
-- **added single ton driver factory and verified that it is working fine**
-- **integrated poi- (verification pending)**
+- **added singleton driver factory and verified that it is working fine**
+- **integrated poi**
 
-
-## TODO
+## TODO - Pending
 
 - **ADD Utility class**
 - **Add extent report**
-- **Add pom**
-- 
-- 
+- **Add POM**
