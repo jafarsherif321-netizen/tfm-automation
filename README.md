@@ -56,7 +56,7 @@ tfm-automation/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-repo/ideal-automation.git
+git clone https://github.com/jafarsherif321-netizen/tfm-automation.git
 cd tfm-automation
 ```
 
