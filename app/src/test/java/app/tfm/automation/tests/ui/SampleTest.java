@@ -2,6 +2,7 @@ package app.tfm.automation.tests.ui;
 
 import app.tfm.automation.dataprovider.ExcelDataProvider;
 import app.tfm.automation.pages.Sample;
+import app.tfm.automation.utils.Utils;
 import app.tfm.automation.config.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -23,7 +24,7 @@ public class SampleTest extends BaseTest {
 
         status = sample.checkOut();
         Assert.assertTrue(status,"Failed to checkout");
-        System.out.println("Verify that User can checkOut using exisiting account: "+(status?"Passed":"Failed"));
+        Utils.logStatus("Verify that User can checkOut using exisiting account", (status?"Passed":"Failed"));
 
     }
 }

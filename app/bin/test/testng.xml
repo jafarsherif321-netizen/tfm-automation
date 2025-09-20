@@ -4,22 +4,22 @@
     <test name="ChromeTests">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="app.ideal.automation.tests.ui.LoginTest"/>
+            <class name="app.tfm.automation.tests.ui.SampleTest"/>
         </classes>
     </test>
 
     <!-- <test name="FirefoxTests">
         <parameter name="browser" value="firefox"/>
         <classes>
-            <class name="app.ideal.automation.tests.ui.LoginTest"/>
+            <class name="app.tfm.automation.tests.ui.SampleTest"/>
         </classes>
     </test> -->
 
-    <!-- <test name="EdgeTests">
+    <test name="EdgeTests">
         <parameter name="browser" value="edge"/>
         <classes>
-            <class name="app.ideal.automation.tests.ui.LoginTest"/>
+            <class name="app.tfm.automation.tests.ui.SampleTest"/>
         </classes>
-    </test> -->
+    </test>
 
 </suite>
