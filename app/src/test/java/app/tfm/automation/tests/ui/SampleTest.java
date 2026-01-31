@@ -7,7 +7,7 @@ import app.tfm.automation.config.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings({"null"}) //"unused"
 public class SampleTest extends BaseTest {
 
     //sample test to check the automation of TFM
@@ -24,6 +24,13 @@ public class SampleTest extends BaseTest {
 
         status = sample.checkOut();
         Assert.assertTrue(status,"Failed to checkout");
+
+        status = sample.NavigateToMyOrders();
+        Assert.assertTrue(status,"Failed to Navigate to My Orders page");
+
+        status = sample.logout();
+        Assert.assertTrue(status,"Logout Failed");
+
         Utils.logStatus("Verify that User can checkOut using exisiting account", (status?"Passed":"Failed"));
     }
 }
