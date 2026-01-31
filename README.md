@@ -5,7 +5,7 @@
 This is a **Java + Gradle automation framework** for testing the TFM web application.
 It supports **UI testing** using Selenium WebDriver, **API testing** using RestAssured, and **reporting** with ExtentReports.
 
-The framework follows **Page Object Model (POM)** design, **TestNG** as the test runner, and **data-driven testing** using JSON files.
+The framework follows **Page Object Model (POM)** design, **TestNG** as the test runner, and **data-driven testing** Apache POI.
 
 ---
 
