@@ -18,10 +18,14 @@ public class Utils {
     private Actions actions;
 
     public Utils(WebDriver driver) {
+        try{
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        this.actions = new Actions(driver);
-
+            this.actions = new Actions(driver);
+        } catch (Exception e) {
+            System.out.println("Error: while initilizing the actions class "+e.getMessage());
+        }
+        
     }
 
     public void enterTextByChar(By locator, String text) {

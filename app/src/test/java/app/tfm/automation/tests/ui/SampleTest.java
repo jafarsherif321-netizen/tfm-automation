@@ -25,6 +25,5 @@ public class SampleTest extends BaseTest {
         status = sample.checkOut();
         Assert.assertTrue(status,"Failed to checkout");
         Utils.logStatus("Verify that User can checkOut using exisiting account", (status?"Passed":"Failed"));
-
     }
 }
