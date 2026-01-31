@@ -5,27 +5,31 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-@SuppressWarnings({"unused", "null"})
+@SuppressWarnings({ "unused", "null" })
 public class Utils {
     private WebDriver driver;
     WebDriverWait wait;
     private Actions actions;
+    JavascriptExecutor js;
 
     public Utils(WebDriver driver) {
-        try{
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        try {
+            this.driver = driver;
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
             this.actions = new Actions(driver);
+            this.js = (JavascriptExecutor) driver;
+
         } catch (Exception e) {
-            System.out.println("Error: while initilizing the actions class "+e.getMessage());
+            System.out.println("Error: while initilizing the actions class " + e.getMessage());
         }
-        
+
     }
 
     public void enterTextByChar(By locator, String text) {
@@ -58,14 +62,29 @@ public class Utils {
         }
     }
 
+    public WebElement scrollIntoViewJS(By locator) {
+        try {
+            // Wait until the element is present and visible
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+            // Scroll the element into view using JavaScript
+            js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+
+            return element;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public static void logStatus(String description, String status) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        String message = "|| "+timestamp + " || " + description + " || " + status+" ||";
+        String message = "|| " + timestamp + " || " + description + " || " + status + " ||";
 
         if ("Failed".equalsIgnoreCase(status)) {
-            System.err.println(message); 
+            System.err.println(message);
         } else {
-            System.out.println(message); 
+            System.out.println(message);
         }
     }
 

@@ -1,6 +1,8 @@
 package app.tfm.automation.tests.ui;
 
 import app.tfm.automation.driver.DriverManager;
+import app.tfm.automation.pageObjectManager.PageObjectManager;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,6 +16,7 @@ import app.tfm.automation.utils.Utils;
 public abstract class BaseTest {
 
     protected WebDriver driver;
+    PageObjectManager pom;
 
     @Parameters({ "browser" })
     @BeforeMethod(alwaysRun = true)
@@ -26,6 +29,9 @@ public abstract class BaseTest {
         // Clean session
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
+
+        // Initialize PageObjectManager
+        pom = new PageObjectManager(driver);
 
     }
 

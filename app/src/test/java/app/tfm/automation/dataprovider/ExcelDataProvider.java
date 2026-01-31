@@ -19,6 +19,7 @@ public class ExcelDataProvider {
     @DataProvider(name = "excel-data")
     public Object[][] getData(Method m) throws IOException {
         List<List<String>> outputList = new ArrayList<>();
+        System.out.println("working");
 
         // Fetch Excel path from config.properties
         String filePath = ConfigReader.get("testDataPath");
