@@ -113,11 +113,11 @@ public class Utils {
             Thread.sleep(1000);
 
             for (char c : text.toCharArray()) {
-                Thread.sleep(800);
-                actions.sendKeys(String.valueOf(c));
+                //Thread.sleep(800);
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(300));
             }
 
-            actions.build().perform();
+            actions.perform();
 
         } catch (Exception e) {
             e.printStackTrace();

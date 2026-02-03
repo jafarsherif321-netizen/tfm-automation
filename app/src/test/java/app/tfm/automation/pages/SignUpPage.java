@@ -90,14 +90,16 @@ public class SignUpPage {
 
     public String generateUSNumber() {
         try {
-            long sevenDigit = System.currentTimeMillis() % 10000000L;
+            long sixDigitNumber = System.currentTimeMillis() % 1000000L;
 
-            String[] US_AreaCodes = { "201", "202", "212", "213", "305", "312", "617", "646", "702", "650",
+            String[] US_AreaCodes = { "201", "202", "212", "415", "305", "213", "305", "312", "617", "646", "702", "650",
                     "818" };
             Random random = new Random();
             String randomAreaCode = US_AreaCodes[random.nextInt(US_AreaCodes.length)];
 
-            lastGeneratedPhoneNumber = randomAreaCode + String.format("%07d", sevenDigit);
+            int fourthDigit = random.nextInt(8)+2;
+
+            lastGeneratedPhoneNumber = randomAreaCode + fourthDigit+ String.format("%06d", sixDigitNumber);
             return lastGeneratedPhoneNumber;
 
         } catch (Exception e) {
