@@ -5,7 +5,18 @@
 This is a **Java + Gradle automation framework** for testing the TFM web application.
 It supports **UI testing** using Selenium WebDriver, **API testing** using RestAssured, and **reporting** with ExtentReports.
 
-The framework follows **Page Object Model (POM)** design, **TestNG** as the test runner, and **data-driven testing** using Apache POI
+The framework follows a **Hybrid Automation Framework** approach and includes:
+- **Page Object Model (POM)** design pattern
+- **Singleton WebDriver** implementation for centralized driver management and POM initialization
+- **TestNG** as the test execution and test management framework
+- **Extent Reports** for rich and interactive test reporting
+- **Data-driven testing** support using **Apache POI**
+
+---
+
+## Initial Author
+Initial framework design, base setup, and core automation implementation  
+**Jafar Sherif**
 
 ---
 
@@ -30,7 +41,7 @@ tfm-automation/
 │       │   ├── pages/           # Page Objects (LoginPage, DashboardPage, etc.)
 │       │   ├── tests/
 │       │   │   ├── ui/          # UI test classes
-│       │   │   ├── api/         # API test classes
+│       │   │   ├── api/         # API test classes (future)
 │       │   │   └── mobile/      # Mobile test classes (future)
 │       │   ├── dataprovider/    # TestNG DataProviders
 │       └── resources/
@@ -117,16 +128,33 @@ src/test/resources/testdata/
 - **Data providers** under `dataprovider/`
 - **Reusable utilities** under `utils/`
 
+---
+
 ## Components integrated so far
 
 - **Created framework and pushed to GitHub**
-- **added dependencies(selenium, testing, poi)**
-- **added xml file and verified if it is working fine for parallel and cross browser testing**
-- **added singleton driver factory and verified that it is working fine**
-- **integrated poi**
+- **Added dependencies(Selenium, TestNG, Apache POI, ExtentReports )**
+- **Added xml file and verified if it is working fine for parallel and cross browser testing**
+- **Added singleton driver factory and verified that it is working fine**
+- **Integrated Apache POI & Listeners**
+- **Added Utility class for code reuseablity**
+- **Integrated POM**
+- **Integrated ExtentReports and verified working fine**
+
+---
 
 ## TODO - Pending
 
-- **ADD Utility class**
-- **Add extent report**
-- **Add POM**
+- **Improve Utility class**
+- **Increase Test scope**
+- **Generate list of test cases to automate**
+
+---
+
+## Longterm future goals
+- **Script refactor**
+- **API automation using RestAssured**
+- **Mobile automation using Appium**
+
+---
+
