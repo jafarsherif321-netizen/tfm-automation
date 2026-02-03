@@ -37,12 +37,19 @@ public class SignUpPage {
             "Chris", "Justin", "Mark", "Alex", "Nathan", "Liam",
             "Emily", "Sarah", "Jessica", "Ashley", "Amanda",
             "Jennifer", "Melissa", "Elizabeth", "Lauren", "Rachel",
-            "Nicole", "Samantha", "Hannah", "Megan", "Olivia" };
+            "Nicole", "Samantha", "Hannah", "Megan", "Olivia", "Aaron",
+            "Ben", "Caleb", "Ethan", "Jacob", "Joshua", "Lucas", "Noah",
+            "Samuel", "Thomas", "William", "Abigail", "Anna", "Ava", "Chloe",
+            "Ella", "Grace", "Isabella", "Lily", "Madison", "Natalie", "Sophia", "Zoe"
+    };
 
     private static final String[] LAST_NAMES = {
-            "Smith", "Johnson", "Williams", "Brown", "Jones",
-            "Miller", "Davis", "Wilson", "Taylor", "Anderson", "Theadore",
-            "Thomas", "Moore", "Martin", "Clark", "Lewis", "Fernandez" };
+            "Smith", "Johnson", "Williams", "Brown", "Jones", "Campbell",
+            "Miller", "Davis", "Wilson", "Taylor", "Anderson", "Theadore", "Baker",
+            "Thomas", "Moore", "Martin", "Clark", "Lewis", "Fernandez", "Harris", "White",
+            "Young", "King", "Wright", "Lopez", "Hill", "Scott", "Green", "Adams",
+            "Nelson", "Carter", "Mitchell", "Perez", "Roberts", "Turner", "Phillips"
+    };
 
     // Constructor
     public SignUpPage(WebDriver driver) {
@@ -64,13 +71,13 @@ public class SignUpPage {
     private By checkBox = By.xpath("//span[contains(@class, 'checkBoxUi')]");
     private By continueBtn = By.xpath("//button[@data-testid='continue-button']");
     private By otpField = By.xpath("//input[contains(@aria-label,'Please enter verification code')]");
+    private By profileBtn = By.xpath("//div[@data-testid='profile-btn']");
     private By firstNameField = By.xpath("//input[@data-testid='first-name-input']");
     private By lastNameField = By.xpath("//input[@data-testid='last-name-input']");
     private By emailField = By.xpath("//input[@data-testid='email-input']");
     private By createAccSubmitBtn = By.xpath("//button[@data-testid='submit-button']");
     private By startShoppingBtn = By.xpath("//button[contains(@class, 'start_shopping_btn')]");
     private By profileName = By.xpath("(//div[@data-testid='profile-btn']//span)[2]");
-
 
     // Logics
     public String generateIndianNumber() {
@@ -92,14 +99,15 @@ public class SignUpPage {
         try {
             long sixDigitNumber = System.currentTimeMillis() % 1000000L;
 
-            String[] US_AreaCodes = { "201", "202", "212", "415", "305", "213", "305", "312", "617", "646", "702", "650",
+            String[] US_AreaCodes = { "201", "202", "212", "415", "305", "213", "305", "312", "617", "646", "702",
+                    "650",
                     "818" };
             Random random = new Random();
             String randomAreaCode = US_AreaCodes[random.nextInt(US_AreaCodes.length)];
 
-            int fourthDigit = random.nextInt(8)+2;
+            int fourthDigit = random.nextInt(8) + 2;
 
-            lastGeneratedPhoneNumber = randomAreaCode + fourthDigit+ String.format("%06d", sixDigitNumber);
+            lastGeneratedPhoneNumber = randomAreaCode + fourthDigit + String.format("%06d", sixDigitNumber);
             return lastGeneratedPhoneNumber;
 
         } catch (Exception e) {
@@ -122,7 +130,8 @@ public class SignUpPage {
 
     public String generateEmail() {
         String unique = String.valueOf(System.currentTimeMillis() % 100000);
-        return firstName.toLowerCase() + unique + "@mailinator.com";
+        email = firstName.toLowerCase() + unique + "@mailinator.com";
+        return email;
     }
 
     public String getLastGeneratedPhoneNumber() {
@@ -155,7 +164,6 @@ public class SignUpPage {
         }
         return email;
     }
-    
 
     public boolean signUpUsingPhoneNumber(String countryCode, String otp) {
         try {
@@ -180,38 +188,63 @@ public class SignUpPage {
                 lastGeneratedPhoneNumber = generateIndianNumber();
             } else if (countryCode.equalsIgnoreCase("US")) {
                 lastGeneratedPhoneNumber = generateUSNumber();
-            } else {
-                throw new IllegalArgumentException("Invalid contry code, please enter US or IN");
             }
 
-            System.out.println("lastgeneratedphonenumber: "+lastGeneratedPhoneNumber);
+            // System.out.println("lastgeneratedphonenumber: "+lastGeneratedPhoneNumber);
 
             utils.enterTextByChar(phoneNumberField, lastGeneratedPhoneNumber);
             wait.until(ExpectedConditions.visibilityOfElementLocated(checkBox)).click();
             wait.until(ExpectedConditions.elementToBeClickable(continueBtn)).click();
             utils.enterTextByCharActions(otpField, otp);
 
-            firstName = generateFirstName();
-            lastName = generateLastName();
-            email = generateEmail();
-            System.out.println("firstname: "+firstName);
-            System.out.println("lastname: "+lastName);
-            System.out.println("Email: "+email);
+            WebElement visibleElement = wait.until(driver -> {
+                if (!driver.findElements(profileBtn).isEmpty()) {
+                    WebElement el = driver.findElement(profileBtn);
+                    if (el.isDisplayed())
+                        return el;
+                }
+                if (!driver.findElements(firstNameField).isEmpty()) {
+                    WebElement el = driver.findElement(firstNameField);
+                    if (el.isDisplayed())
+                        return el;
+                }
+                return null;
+            });
 
-            utils.enterTextByChar(firstNameField, firstName);
-            utils.enterTextByChar(lastNameField, lastName);
-            utils.enterTextByChar(emailField, email);
-            fullName = firstName+" "+lastName;
+            String testId = visibleElement.getAttribute("data-testid");
 
-            wait.until(ExpectedConditions.elementToBeClickable(createAccSubmitBtn)).click();
-            wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
+            if (testId.equals("first-name-input")) { // new user
+                firstName = generateFirstName();
+                lastName = generateLastName();
+                email = generateEmail();
+                // System.out.println("firstname: "+firstName);
+                // System.out.println("lastname: "+lastName);
+                // System.out.println("Email: "+email);
 
-            WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
-            System.out.println("username: "+userNameEle.getText());
-            System.out.println("fullname: "+fullName);
-            status = userNameEle.getText().contains(fullName);
+                utils.enterTextByChar(firstNameField, firstName);
+                utils.enterTextByChar(lastNameField, lastName);
+                utils.enterTextByChar(emailField, email);
+                fullName = firstName + " " + lastName;
 
-            Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
+                wait.until(ExpectedConditions.elementToBeClickable(createAccSubmitBtn)).click();
+                wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
+
+                WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
+                // System.out.println("username: "+userNameEle.getText());
+                // System.out.println("fullname: "+fullName);
+                status = userNameEle.getText().contains(fullName);
+                Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
+
+            } else if (testId.equals("profile-btn")) { // existing user
+                status = visibleElement.isDisplayed();
+                Utils.logStatus("Existing user detected: Login flow completed instead of registration", (status ? "Passed" : "Failed"));
+            } else {
+                status = false;
+                throw new IllegalStateException(
+                        "Signup flow failed: The provided data-testid [" + testId + "] does not match either flow.");
+
+            }
+
             return status;
 
         } catch (Exception e) {

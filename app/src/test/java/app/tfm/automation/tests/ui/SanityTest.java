@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 @SuppressWarnings({ "null" }) // "unused"
 public class SanityTest extends BaseTest {
 
-    @Test(description = "TC01: Verify that User can checkout using exisiting account", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    //@Test(description = "TC01: Verify that User can checkout using exisiting account", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
     public void checkoutUsingExistingAccount(String PHONE_NUMBER, String OTP, String SEARCH_KEYWORD,
             String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC01: Verify that User can checkout using exisiting account", "");

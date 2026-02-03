@@ -6,6 +6,7 @@ This is a **Java + Gradle automation framework** for testing the TFM web applica
 It supports **UI testing** using Selenium WebDriver, **API testing** using RestAssured, and **reporting** with ExtentReports.
 
 The framework follows a **Hybrid Automation Framework** approach and includes:
+
 - **Page Object Model (POM)** design pattern
 - **Singleton WebDriver** implementation for centralized driver management and POM initialization
 - **TestNG** as the test execution and test management framework
@@ -15,7 +16,8 @@ The framework follows a **Hybrid Automation Framework** approach and includes:
 ---
 
 ## Initial Author
-Initial framework design, base setup, and core automation implementation  
+
+Initial framework design, base setup, and core automation implementation
 **Jafar Sherif**
 
 ---
@@ -152,9 +154,9 @@ src/test/resources/testdata/
 ---
 
 ## Longterm future goals
+
 - **Script refactor**
 - **API automation using RestAssured**
 - **Mobile automation using Appium**
 
 ---
-
