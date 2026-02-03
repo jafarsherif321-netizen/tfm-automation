@@ -12,6 +12,18 @@ out/
 test-output/
 test-execution-result/
 reports/
+extent-reports/
+allure-results/
+allure-report/
+
+# Logs
+*.log
+logs/
+
+# ExtraFiles
+screenshots/
+downloads/
+
 
 # ide
 .vscode/

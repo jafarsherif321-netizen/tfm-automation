@@ -19,7 +19,7 @@ public abstract class BaseTest {
     PageObjectManager pom;
 
     @Parameters({ "browser" })
-    @BeforeMethod(alwaysRun = true)
+    @BeforeTest(alwaysRun = true)
     public void setUp(String browser) {
         Utils.logStatus("Starting driver", "Initialized");
         // Initialize driver once per <test> in testng.xml
@@ -33,9 +33,12 @@ public abstract class BaseTest {
         // Initialize PageObjectManager
         pom = new PageObjectManager(driver);
 
+        //Clear old screenshots
+        Utils.clearOldScreenshots(true);
+
     }
 
-    //@AfterMethod(alwaysRun = true)
+    //@AfterTest(alwaysRun = true)
     public void tearDown() {
         Utils.logStatus("Quiting driver", "Success");
         // Quit driver after the suite/test block

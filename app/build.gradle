@@ -23,6 +23,9 @@ dependencies {
     //Extend Reports
     implementation 'com.aventstack:extentreports:5.1.1'
 
+    //Helper utilities
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

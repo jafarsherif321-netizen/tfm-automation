@@ -92,7 +92,7 @@ public class SignUpPage {
         try {
             long sevenDigit = System.currentTimeMillis() % 10000000L;
 
-            String[] US_AreaCodes = { "201", "202", "212", "213", "305", "312", "415", "617", "646", "702", "650",
+            String[] US_AreaCodes = { "201", "202", "212", "213", "305", "312", "617", "646", "702", "650",
                     "818" };
             Random random = new Random();
             String randomAreaCode = US_AreaCodes[random.nextInt(US_AreaCodes.length)];

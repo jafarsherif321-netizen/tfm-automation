@@ -1,17 +1,23 @@
 package app.tfm.automation.utils;
 
 import java.util.Date;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import app.tfm.automation.config.ConfigReader;
 
 @SuppressWarnings({ "unused", "null" })
 public class Utils {
@@ -157,5 +163,56 @@ public class Utils {
         }
     }
 
-    //write method to click on an element - takes locator
+    
+    public static void clearOldScreenshots(boolean clearOldSS) {
+        if (!clearOldSS) {
+            return;
+        }
+        String dir = ConfigReader.get("screeshotFolderPath");
+        File folder = new File(dir);
+        try {
+            if (folder.exists()) {
+                File[] files = folder.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            boolean deleted = file.delete();
+                            if (!deleted) {
+                                System.err.println("Could not delete screenshot file: " + file.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while clearing old screenshots: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void captureScreenshot(WebDriver driver, String testName) {
+        String dir = ConfigReader.get("screeshotFolderPath");
+        File folder = new File(dir);
+
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date());
+        File dest = new File(dir + testName + "_" + timestamp + ".png");
+
+        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(src, dest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String captureScreenshotBase64(WebDriver driver) {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+    }
+
+
+    //TODO: write method to click on an element - takes locator
 }
