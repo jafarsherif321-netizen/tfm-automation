@@ -6,6 +6,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -32,23 +33,91 @@ public class Utils {
 
     }
 
-    public void enterTextByChar(By locator, String text) {
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        element.clear();
-        for (char c : text.toCharArray()) {
-            element.sendKeys(String.valueOf(c));
+    public void sendKeysUsingJS(By locator, String value) throws Exception {
+        try {
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+            js.executeScript("arguments[0].value = '';", element);
+            js.executeScript("arguments[0].value = arguments[1];", element, value);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    public void sendKeys(By locator, String value) throws Exception {
+    try {
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+        element.click();     
+        element.clear(); 
+        Thread.sleep(2000);    
+        element.sendKeys(value);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw e;
+    }
+}
+
+
+    public void sendKeysUsingActions(By locator, String value) {
+        try {
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+            actions.moveToElement(element)
+                    .click()
+                    .keyDown(Keys.CONTROL)
+                    .sendKeys("a")
+                    .keyUp(Keys.CONTROL)
+                    .sendKeys(Keys.DELETE)
+                    .sendKeys(value)
+                    .perform();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
-    public void enterTextByCharActions(By locator, String text) {
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        actions.moveToElement(element).click();
+    public void enterTextByChar(By locator, String text) throws Exception {
+        try {
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            element.click();
+            element.clear();
+            Thread.sleep(800);
+            for (char c : text.toCharArray()) {
+                Thread.sleep(100);
+                element.sendKeys(String.valueOf(c));
+            }
 
-        for (char c : text.toCharArray()) {
-            actions.sendKeys(String.valueOf(c));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
 
-        actions.build().perform();
+    }
+
+    public void enterTextByCharActions(By locator, String text) throws Exception {
+        try {
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            actions.moveToElement(element).click();
+            Thread.sleep(1000);
+
+            for (char c : text.toCharArray()) {
+                Thread.sleep(800);
+                actions.sendKeys(String.valueOf(c));
+            }
+
+            actions.build().perform();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     public WebElement scrollIntoView(By locator) {
@@ -88,4 +157,5 @@ public class Utils {
         }
     }
 
+    //write method to click on an element - takes locator
 }

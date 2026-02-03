@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 public class SanityTest extends BaseTest {
 
     @Test(description = "TC01: Verify that User can checkout using exisiting account", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
-
     public void checkoutUsingExistingAccount(String PHONE_NUMBER, String OTP, String SEARCH_KEYWORD,
             String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC01: Verify that User can checkout using exisiting account", "");
@@ -38,5 +37,20 @@ public class SanityTest extends BaseTest {
         Assert.assertTrue(status, "Logout Failed");
 
         Utils.logStatus("End TestCase TC01: Verify that User can checkout using exisiting account", (status ? "Passed" : "Failed"));
+    }
+
+    @Test(description = "TC02: Verify that User can sign-up using phone number", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    public void signUpWithPhoneNumber(String COUNTRY_CODE, String OTP){
+        Utils.logStatus("Start TestCase TC02: Verify that User can sign-up using phone number", "");
+        driver.get(ConfigReader.get("baseUrl"));
+        
+        Boolean status = pom.signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE,OTP);
+        Assert.assertTrue(status, "Failed to signUp with phone number");
+
+        status = pom.homePage().logout();
+        Assert.assertTrue(status, "Logout Failed");
+
+        Utils.logStatus("End TestCase TC02: Verify that User can sign-up using phone number", (status ? "Passed" : "Failed"));
+
     }
 }

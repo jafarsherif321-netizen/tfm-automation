@@ -67,7 +67,7 @@ public class HomePage {
             utils.scrollIntoViewJS(logoutBtn);
 
             // wait.until(ExpectedConditions.elementToBeClickable(logoutBtn)).click();
-            WebElement logoutBtnEle = wait.until(ExpectedConditions.visibilityOfElementLocated(logoutBtn));
+            WebElement logoutBtnEle = wait.until(ExpectedConditions.presenceOfElementLocated(logoutBtn));
 
             js.executeScript("arguments[0].click();", logoutBtnEle);
 
