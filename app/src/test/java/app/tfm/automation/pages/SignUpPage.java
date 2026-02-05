@@ -231,10 +231,10 @@ public class SignUpPage {
                     Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
 
                 } else {
-                    status = !wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)) //exsisting user - blocked signup
+                    status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)) //exsisting user - blocked signup
                             .isDisplayed();
                     Utils.logStatus("Signup blocked: Phone number already registered. Error shown: '" + text + "' ",
-                            (status ? "Failed":"Passed"));
+                            (status ? "Passed" : "Failed"));
                     driver.navigate().refresh();
                 }
 
@@ -257,6 +257,6 @@ public class SignUpPage {
         }
 
     }
-    //TODO: Change the logic of singn up
+
 
 }

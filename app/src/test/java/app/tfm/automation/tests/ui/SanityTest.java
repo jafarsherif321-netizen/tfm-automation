@@ -50,12 +50,8 @@ public class SanityTest extends BaseTest {
         Boolean status = pom.signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
         Assert.assertTrue(status, "Failed to signUp with phone number");
 
-        if (status != false) {
-            status = pom.homePage().logout();
-            Assert.assertTrue(status, "Logout Failed");
-        }else{
-            status = true;
-        }
+        status = pom.homePage().logout();
+        Assert.assertTrue(status, "Logout Failed");
 
         Utils.logStatus("End TestCase TC02: Verify that User can sign-up using phone number",
                 (status ? "Passed" : "Failed"));

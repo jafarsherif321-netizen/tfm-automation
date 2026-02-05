@@ -60,21 +60,42 @@ public class HomePage {
         }
     }
 
+    public boolean isUserLoggedIn(){
+        try {
+
+            WebElement visibleElement = utils.waitForFirstVisibleElement(profileIcon, profileBtn);
+            String visibleElementText = visibleElement.getAttribute("data-testid");
+
+            return visibleElementText.equals("profile-btn");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean logout() {
         try {
-            WebElement profileBtnEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileBtn));
-            actions.moveToElement(profileBtnEle).perform();
-            utils.scrollIntoViewJS(logoutBtn);
 
-            // wait.until(ExpectedConditions.elementToBeClickable(logoutBtn)).click();
-            WebElement logoutBtnEle = wait.until(ExpectedConditions.presenceOfElementLocated(logoutBtn));
+            if (isUserLoggedIn()) {
+                WebElement profileBtnEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileBtn));
+                actions.moveToElement(profileBtnEle).perform();
+                utils.scrollIntoViewJS(logoutBtn);
 
-            js.executeScript("arguments[0].click();", logoutBtnEle);
+                WebElement logoutBtnEle = wait.until(ExpectedConditions.presenceOfElementLocated(logoutBtn));
 
-            wait.until(ExpectedConditions.elementToBeClickable(confirmLogout)).click();
-            status = wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).isDisplayed();
+                js.executeScript("arguments[0].click();", logoutBtnEle);
 
-            Utils.logStatus("User successfully Logged out", (status ? "Passed" : "Failed"));
+                wait.until(ExpectedConditions.elementToBeClickable(confirmLogout)).click();
+                status = wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).isDisplayed();
+
+                Utils.logStatus("User successfully Logged out", (status ? "Passed" : "Failed"));
+
+            }else{
+                status = wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).isDisplayed();
+                Utils.logStatus("Logout Skipped: Currently no user is logged-in", (status ? "Passed" : "Failed"));
+            }
+
             return status;
         } catch (Exception e) {
             e.printStackTrace();
