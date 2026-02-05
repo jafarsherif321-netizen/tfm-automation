@@ -187,8 +187,7 @@ public class SignUpPage {
             if (countryCode.equalsIgnoreCase("IN")) {
                 lastGeneratedPhoneNumber = generateIndianNumber();
             } else if (countryCode.equalsIgnoreCase("US")) {
-                lastGeneratedPhoneNumber = "5215571789";
-                // generateUSNumber();
+                lastGeneratedPhoneNumber = generateUSNumber();
             }
 
             // System.out.println("lastgeneratedphonenumber: "+lastGeneratedPhoneNumber);
