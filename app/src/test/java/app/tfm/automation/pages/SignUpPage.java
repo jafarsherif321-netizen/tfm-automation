@@ -76,6 +76,7 @@ public class SignUpPage {
     private By lastNameField = By.xpath("//input[@data-testid='last-name-input']");
     private By emailField = By.xpath("//input[@data-testid='email-input']");
     private By createAccSubmitBtn = By.xpath("//button[@data-testid='submit-button']");
+    private By alreadyRegisteredError = By.xpath("//div[contains(@class,'error-message')]");
     private By startShoppingBtn = By.xpath("//button[contains(@class, 'start_shopping_btn')]");
     private By profileName = By.xpath("(//div[@data-testid='profile-btn']//span)[2]");
 
@@ -100,8 +101,7 @@ public class SignUpPage {
             long sixDigitNumber = System.currentTimeMillis() % 1000000L;
 
             String[] US_AreaCodes = { "201", "202", "212", "415", "305", "213", "305", "312", "617", "646", "702",
-                    "650",
-                    "818" };
+                    "650", "818" };
             Random random = new Random();
             String randomAreaCode = US_AreaCodes[random.nextInt(US_AreaCodes.length)];
 
@@ -187,7 +187,8 @@ public class SignUpPage {
             if (countryCode.equalsIgnoreCase("IN")) {
                 lastGeneratedPhoneNumber = generateIndianNumber();
             } else if (countryCode.equalsIgnoreCase("US")) {
-                lastGeneratedPhoneNumber = generateUSNumber();
+                lastGeneratedPhoneNumber = "5215571789";
+                // generateUSNumber();
             }
 
             // System.out.println("lastgeneratedphonenumber: "+lastGeneratedPhoneNumber);
@@ -197,23 +198,11 @@ public class SignUpPage {
             wait.until(ExpectedConditions.elementToBeClickable(continueBtn)).click();
             utils.enterTextByCharActions(otpField, otp);
 
-            WebElement visibleElement = wait.until(driver -> {
-                if (!driver.findElements(profileBtn).isEmpty()) {
-                    WebElement el = driver.findElement(profileBtn);
-                    if (el.isDisplayed())
-                        return el;
-                }
-                if (!driver.findElements(firstNameField).isEmpty()) {
-                    WebElement el = driver.findElement(firstNameField);
-                    if (el.isDisplayed())
-                        return el;
-                }
-                return null;
-            });
+            WebElement visibleElement = utils.waitForFirstVisibleElement(profileBtn, firstNameField);
 
             String testId = visibleElement.getAttribute("data-testid");
 
-            if (testId.equals("first-name-input")) { // new user
+            if (testId.equals("first-name-input")) { // signup page 
                 firstName = generateFirstName();
                 lastName = generateLastName();
                 email = generateEmail();
@@ -227,17 +216,32 @@ public class SignUpPage {
                 fullName = firstName + " " + lastName;
 
                 wait.until(ExpectedConditions.elementToBeClickable(createAccSubmitBtn)).click();
-                wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
 
-                WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
-                // System.out.println("username: "+userNameEle.getText());
-                // System.out.println("fullname: "+fullName);
-                status = userNameEle.getText().contains(fullName);
-                Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
+                WebElement visibleEle = utils.waitForFirstVisibleElement(startShoppingBtn, alreadyRegisteredError);
 
-            } else if (testId.equals("profile-btn")) { // existing user
+                String text = visibleEle.getText();
+
+                if (text.contains("Start Shopping & Saving")) { //new user 
+                    wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
+
+                    WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
+                    // System.out.println("username: "+userNameEle.getText());
+                    // System.out.println("fullname: "+fullName);
+                    status = userNameEle.getText().contains(fullName);
+                    Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
+
+                } else {
+                    status = !wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)) //exsisting user - blocked signup
+                            .isDisplayed();
+                    Utils.logStatus("Signup blocked: Phone number already registered. Error shown: '" + text + "' ",
+                            (status ? "Failed":"Passed"));
+                    driver.navigate().refresh();
+                }
+
+            } else if (testId.equals("profile-btn")) { // existing user - auto logged in
                 status = visibleElement.isDisplayed();
-                Utils.logStatus("Existing user detected: Login flow completed instead of registration", (status ? "Passed" : "Failed"));
+                Utils.logStatus("Existing user detected: Login flow completed instead of registration",
+                        (status ? "Passed" : "Failed"));
             } else {
                 status = false;
                 throw new IllegalStateException(
@@ -250,9 +254,9 @@ public class SignUpPage {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-
         }
 
     }
+    //TODO: Change the logic of singn up
 
 }

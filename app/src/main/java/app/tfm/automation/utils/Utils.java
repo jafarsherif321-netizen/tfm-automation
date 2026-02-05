@@ -54,20 +54,19 @@ public class Utils {
     }
 
     public void sendKeys(By locator, String value) throws Exception {
-    try {
-        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+        try {
+            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 
-        element.click();     
-        element.clear(); 
-        Thread.sleep(2000);    
-        element.sendKeys(value);
+            element.click();
+            element.clear();
+            Thread.sleep(2000);
+            element.sendKeys(value);
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
-}
-
 
     public void sendKeysUsingActions(By locator, String value) {
         try {
@@ -113,7 +112,6 @@ public class Utils {
             Thread.sleep(1000);
 
             for (char c : text.toCharArray()) {
-                //Thread.sleep(800);
                 actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(300));
             }
 
@@ -123,7 +121,6 @@ public class Utils {
             e.printStackTrace();
             throw e;
         }
-
     }
 
     public WebElement scrollIntoView(By locator) {
@@ -163,7 +160,6 @@ public class Utils {
         }
     }
 
-    
     public static void clearOldScreenshots(boolean clearOldSS) {
         if (!clearOldSS) {
             return;
@@ -213,6 +209,30 @@ public class Utils {
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
     }
 
+    // custom wait which waits until one of the elements is visible and will return
+    // the 1st visible ele
+    public WebElement waitForFirstVisibleElement(By first, By second) {
+        return wait.until(driver -> {
 
-    //TODO: write method to click on an element - takes locator
+            if (!driver.findElements(first).isEmpty()) {
+                WebElement el = driver.findElement(first);
+                if (el.isDisplayed() ) {
+                    return el;
+                }
+            }
+
+            if (!driver.findElements(second).isEmpty()) {
+                WebElement el = driver.findElement(second);
+                if (el.isDisplayed()) {
+                    return el;
+                }
+            }
+
+            return null;
+        });
+    }
+
+
+    // TODO: write method to click on an element - takes locator
+
 }
