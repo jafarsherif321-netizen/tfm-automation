@@ -255,7 +255,13 @@ public class SignUpPage {
             return false;
         }
 
-    }
+        //1.TODO: Have to implement email duplication check - need retry mechanism here
+        //2.TODO: Figureout how to upload media files to website to simulate create post - need 1000 users posting 3-5 posts each 
+        //3.TODO: Need the logic to add photo and bio to a profile 
+        //4.TODO: Add Card
+        //5.TODO: Save Address
+        
 
+    }
 
 }

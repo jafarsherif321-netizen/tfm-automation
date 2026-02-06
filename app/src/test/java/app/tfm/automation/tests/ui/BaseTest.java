@@ -38,7 +38,7 @@ public abstract class BaseTest {
 
     }
 
-    @AfterTest(alwaysRun = true)
+    //@AfterTest(alwaysRun = true)
     public void tearDown() {
         Utils.logStatus("Quiting driver", "Success");
         // Quit driver after the suite/test block

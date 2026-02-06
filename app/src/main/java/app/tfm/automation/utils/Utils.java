@@ -112,7 +112,7 @@ public class Utils {
             Thread.sleep(1000);
 
             for (char c : text.toCharArray()) {
-                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(300));
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(400));
             }
 
             actions.perform();
@@ -233,6 +233,6 @@ public class Utils {
     }
 
 
-    // TODO: write method to click on an element - takes locator
+    // TODO: write method to click on an element - takes locator, also need jsclick
 
 }

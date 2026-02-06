@@ -4,6 +4,7 @@ import org.openqa.selenium.WebDriver;
 
 import app.tfm.automation.pages.CartPage;
 import app.tfm.automation.pages.CheckoutPage;
+import app.tfm.automation.pages.CreatePostPage;
 import app.tfm.automation.pages.HomePage;
 import app.tfm.automation.pages.LoginPage;
 import app.tfm.automation.pages.OrdersPage;
@@ -19,6 +20,7 @@ public class PageObjectManager {
     private CartPage cartPage;
     private CheckoutPage checkoutPage;
     private OrdersPage ordersPage;
+    private CreatePostPage createPostPage;
 
     public PageObjectManager(WebDriver driver) {
         this.driver = driver;
@@ -64,6 +66,12 @@ public class PageObjectManager {
         if (ordersPage == null)
             ordersPage = new OrdersPage(driver);
         return ordersPage;
+    }
+
+    public CreatePostPage createPostPage() {
+        if (createPostPage == null)
+            createPostPage = new CreatePostPage(driver);
+        return createPostPage;
     }
 
 }
