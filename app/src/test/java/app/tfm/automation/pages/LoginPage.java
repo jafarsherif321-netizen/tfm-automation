@@ -39,8 +39,7 @@ public class LoginPage {
     public boolean login(String phonenumber, String otp) {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(loginBtn)).click();
-            Thread.sleep(2000);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(phoneNumberField)).sendKeys(phonenumber);
+            utils.enterTextByCharActions(phoneNumberField,phonenumber);
             wait.until(ExpectedConditions.visibilityOfElementLocated(continueBtn)).click();
             utils.enterTextByCharActions(otpField, otp);
 

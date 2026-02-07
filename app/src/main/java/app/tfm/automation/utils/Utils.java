@@ -18,8 +18,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import app.tfm.automation.config.ConfigReader;
+import app.tfm.automation.reporting.TestLogManager;
 
-@SuppressWarnings({ "unused", "null" })
+@SuppressWarnings({ "null" })
 public class Utils {
     private WebDriver driver;
     WebDriverWait wait;
@@ -59,7 +60,7 @@ public class Utils {
 
             element.click();
             element.clear();
-            Thread.sleep(2000);
+            actions.pause(Duration.ofMillis(1500)).perform();;
             element.sendKeys(value);
 
         } catch (Exception e) {
@@ -92,10 +93,10 @@ public class Utils {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
             element.click();
             element.clear();
-            Thread.sleep(800);
+            actions.pause(Duration.ofMillis(1800)).perform();
             for (char c : text.toCharArray()) {
-                Thread.sleep(100);
                 element.sendKeys(String.valueOf(c));
+                actions.pause(Duration.ofMillis(100));
             }
 
         } catch (Exception e) {
@@ -108,14 +109,13 @@ public class Utils {
     public void enterTextByCharActions(By locator, String text) throws Exception {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            actions.moveToElement(element).click();
-            Thread.sleep(1000);
+            actions.moveToElement(element).click().pause(Duration.ofMillis(1800)).perform();
 
             for (char c : text.toCharArray()) {
-                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(400));
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(150));
             }
 
-            actions.perform();
+           actions.perform();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,6 +158,8 @@ public class Utils {
         } else {
             System.out.println(message);
         }
+        // To log in Extent reports
+        TestLogManager.log(message);
     }
 
     public static void clearOldScreenshots(boolean clearOldSS) {
@@ -216,7 +218,7 @@ public class Utils {
 
             if (!driver.findElements(first).isEmpty()) {
                 WebElement el = driver.findElement(first);
-                if (el.isDisplayed() ) {
+                if (el.isDisplayed()) {
                     return el;
                 }
             }
@@ -232,7 +234,36 @@ public class Utils {
         });
     }
 
+    public boolean isElementVisible(By locator) {
+        try {
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            return shortWait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
 
-    // TODO: write method to click on an element - takes locator, also need jsclick
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    public void clickOnElement(By locator) {
+        try {
+            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+            element.click();
+        } catch (Exception e) {
+            System.err.println("Normal click failed, trying JS click for: " + locator);
+            clickOnEleByJS(locator); // fallback
+        }
+    }
+
+    public void clickOnEleByJS(By locator) {
+        try {
+            WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            js.executeScript("arguments[0].click();", element);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("JS Click also failed for: " + locator);
+        }
+    }
+
 
 }

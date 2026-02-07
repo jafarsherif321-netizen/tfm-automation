@@ -1,6 +1,9 @@
 package app.tfm.automation.pages;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 import org.openqa.selenium.By;
@@ -11,6 +14,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import app.tfm.automation.dataprovider.ExcelWriter;
 import app.tfm.automation.utils.Utils;
 
 @SuppressWarnings({ "unused", "null" })
@@ -75,6 +80,8 @@ public class SignUpPage {
     private By firstNameField = By.xpath("//input[@data-testid='first-name-input']");
     private By lastNameField = By.xpath("//input[@data-testid='last-name-input']");
     private By emailField = By.xpath("//input[@data-testid='email-input']");
+    private By alreadyRegisteredEmailError = By
+            .xpath("//label[contains(.,'This email address is linked with a user account')]");
     private By createAccSubmitBtn = By.xpath("//button[@data-testid='submit-button']");
     private By alreadyRegisteredError = By.xpath("//div[contains(@class,'error-message')]");
     private By startShoppingBtn = By.xpath("//button[contains(@class, 'start_shopping_btn')]");
@@ -190,9 +197,9 @@ public class SignUpPage {
                 lastGeneratedPhoneNumber = generateUSNumber();
             }
 
-            // System.out.println("lastgeneratedphonenumber: "+lastGeneratedPhoneNumber);
+            System.out.println("lastgeneratedphonenumber: " + lastGeneratedPhoneNumber);
 
-            utils.enterTextByChar(phoneNumberField, lastGeneratedPhoneNumber);
+            utils.enterTextByCharActions(phoneNumberField, lastGeneratedPhoneNumber);
             wait.until(ExpectedConditions.visibilityOfElementLocated(checkBox)).click();
             wait.until(ExpectedConditions.elementToBeClickable(continueBtn)).click();
             utils.enterTextByCharActions(otpField, otp);
@@ -201,18 +208,37 @@ public class SignUpPage {
 
             String testId = visibleElement.getAttribute("data-testid");
 
-            if (testId.equals("first-name-input")) { // signup page 
+            if (testId.equals("first-name-input")) { // signup page
                 firstName = generateFirstName();
                 lastName = generateLastName();
-                email = generateEmail();
+                fullName = firstName + " " + lastName;
                 // System.out.println("firstname: "+firstName);
                 // System.out.println("lastname: "+lastName);
-                // System.out.println("Email: "+email);
+                // System.out.println("fullname: "+fullName);
 
-                utils.enterTextByChar(firstNameField, firstName);
-                utils.enterTextByChar(lastNameField, lastName);
-                utils.enterTextByChar(emailField, email);
-                fullName = firstName + " " + lastName;
+                utils.enterTextByCharActions(firstNameField, firstName);
+                utils.enterTextByCharActions(lastNameField, lastName);
+
+                int maxAttempts = 3; // to handle whene email is already registered
+                boolean isEmailUnique = false;
+
+                for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                    email = generateEmail();
+
+                    utils.enterTextByChar(emailField, email);
+                    boolean isEmailAlreadyTaken = utils.isElementVisible(alreadyRegisteredEmailError);
+
+                    if (!isEmailAlreadyTaken) {
+                        isEmailUnique = true;
+                        break;
+                    }
+                    Utils.logStatus("Email already registered. Retrying with new email", "Attempt: " + attempt);
+
+                }
+
+                if (!isEmailUnique) {
+                    throw new RuntimeException("Failed to generate a unique email after " + maxAttempts + " attempts");
+                }
 
                 wait.until(ExpectedConditions.elementToBeClickable(createAccSubmitBtn)).click();
 
@@ -220,7 +246,7 @@ public class SignUpPage {
 
                 String text = visibleEle.getText();
 
-                if (text.contains("Start Shopping & Saving")) { //new user 
+                if (text.contains("Start Shopping & Saving")) { // new user
                     wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
 
                     WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
@@ -228,10 +254,11 @@ public class SignUpPage {
                     // System.out.println("fullname: "+fullName);
                     status = userNameEle.getText().contains(fullName);
                     Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
+                    if (status){ storeSignUpData();}
 
                 } else {
-                    status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)) //exsisting user - blocked signup
-                            .isDisplayed();
+                    status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)).isDisplayed();
+                    //Exisiting user blocked
                     Utils.logStatus("Signup blocked: Phone number already registered. Error shown: '" + text + "' ",
                             (status ? "Passed" : "Failed"));
                     driver.navigate().refresh();
@@ -255,13 +282,32 @@ public class SignUpPage {
             return false;
         }
 
-        //1.TODO: Have to implement email duplication check - need retry mechanism here
-        //2.TODO: Figureout how to upload media files to website to simulate create post - need 1000 users posting 3-5 posts each 
-        //3.TODO: Need the logic to add photo and bio to a profile 
-        //4.TODO: Add Card
-        //5.TODO: Save Address
-        
+        // 3.TODO: Need the logic to add photo and bio to a profile
+        // 4.TODO: Add Card
+        // 5.TODO: Save Address
 
+    }
+
+    private void storeSignUpData() {
+        try {
+            LinkedHashMap<String, String> data = new LinkedHashMap<>();
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            data.put("Timestamp", LocalDateTime.now().format(dtf));
+            data.put("Full Name", fullName);
+            data.put("Phone Number", lastGeneratedPhoneNumber);
+            data.put("Email", email);
+
+            // Sheet name = method name for easy mapping
+            ExcelWriter.writeData("SignUp Data", data);
+
+            Utils.logStatus("Signup data stored in Excel", "Info");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Utils.logStatus("Failed to store signup data", "Failed");
+        }
     }
 
 }
