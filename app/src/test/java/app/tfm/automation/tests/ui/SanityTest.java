@@ -62,12 +62,43 @@ public class SanityTest extends BaseTest {
         Utils.logStatus("End TestCase TC02: Verify that User can sign-up using phone number",
                 (status ? "Passed" : "Failed"));
 
-
     }
 
-    @Test(description = "TC03: Verify that User can create post using exisiting account", invocationCount = 1)
+    @Test(description = "TC03: Verify that User can checkout using newAccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    public void checkoutUsingNewAccount(String COUNTRY_CODE, String OTP, String SEARCH_KEYWORD, String PRODUCT_NAME) {
+        Utils.logStatus("Start TestCase TC03: Verify that User can checkout using newAccount", "Info");
+        driver.get(ConfigReader.get("baseUrl"));
+        
+
+        Boolean status = pom.signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
+        Assert.assertTrue(status, "Failed to signUp with phone number");
+
+        status = pom.homePage().searchProduct(SEARCH_KEYWORD, PRODUCT_NAME);
+        Assert.assertTrue(status, "Failed to search and navigate to product details page");
+
+        status = pom.productDetailsPage().addTocart();
+        Assert.assertTrue(status, "Failed to add product to cart");
+
+        status = pom.cartPage().navigateToCartPage();
+        Assert.assertTrue(status, "Failed to navigate to cart page");
+
+        status = pom.checkoutPage().checkout();
+        Assert.assertTrue(status, "Failed to checkout");
+
+        status = pom.ordersPage().NavigateToMyOrders();
+        Assert.assertTrue(status, "Failed to Navigate to My Orders page");
+
+        status = pom.homePage().logout();
+        Assert.assertTrue(status, "Logout Failed");
+
+        Utils.logStatus("End TestCase TC03: Verify that User can checkout using newAccount",
+                (status ? "Passed" : "Failed"));
+    }
+
+
+    @Test(description = "TC04: Verify that User can create post using exisiting account", invocationCount = 1)
     public void createPostWithLocalFiles() throws InterruptedException {
-        Utils.logStatus("Start TestCase TC03: Verify that User can create post using exisiting account", "Info");
+        Utils.logStatus("Start TestCase TC04: Verify that User can create post using exisiting account", "Info");
 
         driver.get(ConfigReader.get("socialBaseUrl"));
         Boolean status = pom.loginPage().login("5214471789", "1111");
@@ -79,8 +110,20 @@ public class SanityTest extends BaseTest {
         status = pom.homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
 
-        Utils.logStatus("End TestCase TC03: Verify that User can create post using exisiting account",
+        Utils.logStatus("End TestCase TC04: Verify that User can create post using exisiting account",
                 (status ? "Passed" : "Failed"));
 
     }
+
+
+
+
+
+
+
+
+
+
+    
+    //TODO: Need logic to follow a profile
 }

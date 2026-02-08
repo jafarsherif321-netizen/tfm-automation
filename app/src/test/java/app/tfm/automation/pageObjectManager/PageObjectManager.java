@@ -58,7 +58,7 @@ public class PageObjectManager {
 
     public CheckoutPage checkoutPage() {
         if (checkoutPage == null)
-            checkoutPage = new CheckoutPage(driver);
+            checkoutPage = new CheckoutPage(driver, signUpPage());
         return checkoutPage;
     }
 

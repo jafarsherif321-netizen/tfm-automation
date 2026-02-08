@@ -43,11 +43,11 @@ public class HomePage {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).sendKeys(keyword, Keys.ENTER);
-            Thread.sleep(3000);
+            actions.pause(3000).perform();
 
-            By productElement = By.xpath("//h2[text()='" + productName + "']");
-            wait.until(ExpectedConditions.visibilityOfElementLocated(productElement)).click();
-            Thread.sleep(3000);
+            By productElement = By.xpath("//h2[contains(@data-testid,'product-name') and contains( .,'"+productName+"')]");
+            utils.clickOnElement(productElement);
+            actions.pause(3000).perform();
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCart)).isDisplayed();
             Utils.logStatus("Search successful, navigated to product details page",

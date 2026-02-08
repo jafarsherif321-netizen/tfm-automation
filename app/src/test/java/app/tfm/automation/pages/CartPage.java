@@ -29,13 +29,13 @@ public class CartPage {
     }
 
     // Locators
-    private By cartBtn = By.xpath("//ul//li[@data-testid='cart-icon']");
+    private By cartIcon = By.xpath("//ul//li[@data-testid='cart-icon']");
     private By proceedToCheckOutBtn = By.xpath("//button[text()='Proceed to Checkout']");
 
     // Logics
     public boolean navigateToCartPage() {
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(cartBtn)).click();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(cartIcon)).click();
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(proceedToCheckOutBtn)).isDisplayed();
 
             Utils.logStatus("User successfully navigated to cart page", (status ? "Passed" : "Failed"));

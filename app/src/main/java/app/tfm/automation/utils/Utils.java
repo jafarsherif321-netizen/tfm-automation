@@ -60,7 +60,7 @@ public class Utils {
 
             element.click();
             element.clear();
-            actions.pause(Duration.ofMillis(1500)).perform();;
+            actions.pause(Duration.ofMillis(2000)).perform();
             element.sendKeys(value);
 
         } catch (Exception e) {
@@ -109,13 +109,13 @@ public class Utils {
     public void enterTextByCharActions(By locator, String text) throws Exception {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            actions.moveToElement(element).click().pause(Duration.ofMillis(1800)).perform();
+            actions.moveToElement(element).click().pause(Duration.ofMillis(2500)).perform();
 
             for (char c : text.toCharArray()) {
-                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(150));
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(200));
             }
 
-           actions.perform();
+            actions.perform();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,6 +148,23 @@ public class Utils {
             throw e;
         }
     }
+
+    public void switchToFrame(By frameLocator) {
+        driver.switchTo().defaultContent();
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameLocator));
+    }
+
+    public void sendKeysInsideFrame(By frameLocator, By fieldLocator, String value) throws Exception {
+        driver.switchTo().defaultContent();
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameLocator));
+
+        WebElement field = wait.until(ExpectedConditions.elementToBeClickable(fieldLocator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", field);
+        field.sendKeys(value);
+
+        driver.switchTo().defaultContent();
+    }
+
 
     public static void logStatus(String description, String status) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -264,6 +281,5 @@ public class Utils {
             throw new RuntimeException("JS Click also failed for: " + locator);
         }
     }
-
 
 }

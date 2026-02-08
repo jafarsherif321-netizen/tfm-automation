@@ -164,6 +164,14 @@ public class SignUpPage {
         return lastName;
     }
 
+    public String getLastGeneratedFullName() {
+        if (fullName == null) {
+            throw new IllegalStateException(
+                    "full name is not yet generated. Call generateFirstName() & generateLastName() first.");
+        }
+        return fullName;
+    }
+
     public String getLastGeneratedEmail() {
         if (email == null) {
             throw new IllegalStateException(
@@ -254,11 +262,14 @@ public class SignUpPage {
                     // System.out.println("fullname: "+fullName);
                     status = userNameEle.getText().contains(fullName);
                     Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
-                    if (status){ storeSignUpData();}
+                    if (status) {
+                        storeSignUpData();
+                    }
 
                 } else {
-                    status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError)).isDisplayed();
-                    //Exisiting user blocked
+                    status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError))
+                            .isDisplayed();
+                    // Exisiting user blocked
                     Utils.logStatus("Signup blocked: Phone number already registered. Error shown: '" + text + "' ",
                             (status ? "Passed" : "Failed"));
                     driver.navigate().refresh();
@@ -281,11 +292,6 @@ public class SignUpPage {
             e.printStackTrace();
             return false;
         }
-
-        // 3.TODO: Need the logic to add photo and bio to a profile
-        // 4.TODO: Add Card
-        // 5.TODO: Save Address
-
     }
 
     private void storeSignUpData() {

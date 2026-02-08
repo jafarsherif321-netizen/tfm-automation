@@ -23,15 +23,14 @@ public class ExcelDataProvider {
 
         // Fetch Excel path from config.properties
         String filePath = ConfigReader.get("testDataPath");
-        
 
         if (filePath == null || filePath.isEmpty()) {
             throw new SkipException("Error: TestDataPath is not set in config.properties");
         }
 
         File file = new File(filePath);
-        //System.out.println("Loading Excel file from: " + file.getAbsolutePath());
-        
+        // System.out.println("Loading Excel file from: " + file.getAbsolutePath());
+
         if (!file.exists()) {
             throw new SkipException("Error: Test Data file not found at: " + file.getAbsolutePath());
         }
@@ -40,9 +39,8 @@ public class ExcelDataProvider {
                 Workbook workbook = new XSSFWorkbook(fis)) {
 
             String sheetName = m.getName();
-            //System.out.println("Looking for sheet: " + sheetName);
+            // System.out.println("Looking for sheet: " + sheetName);
             Sheet sheet = workbook.getSheet(sheetName);
-            
 
             if (sheet == null) {
                 throw new SkipException("Error: Sheet '" + sheetName + "' not found in " + filePath);
@@ -62,22 +60,22 @@ public class ExcelDataProvider {
                 }
 
                 List<String> innerList = new ArrayList<>();
+                boolean hasRealData = false;
+
                 for (Cell cell : row) {
                     // Convert cell to string as displayed in Excel
                     String cellValue = formatter.formatCellValue(cell);
-                    innerList.add(cellValue != null ? cellValue.trim() : "");
+                    String trimmedValue = cellValue != null ? cellValue.trim() : "";
 
-                    /*
-                     * switch (cell.getCellType()) {
-                     * case STRING -> innerList.add(cell.getStringCellValue());
-                     * case NUMERIC -> innerList.add(String.valueOf(cell.getNumericCellValue()));
-                     * case BOOLEAN -> innerList.add(String.valueOf(cell.getBooleanCellValue()));
-                     * default -> innerList.add(""); // Blank or formula
-                     * }
-                     */
+                    if (!trimmedValue.isEmpty()) { // CHECK FOR REAL DATA AND IGNORE EMPTY ROWS
+                        hasRealData = true;
+                    }
+                    innerList.add(trimmedValue);
+
                 }
 
-                if (!innerList.isEmpty()) {
+                // Only add row if at least one cell had real data
+                if (hasRealData) {
                     outputList.add(innerList);
                 }
 
