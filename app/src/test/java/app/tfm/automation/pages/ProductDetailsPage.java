@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -30,22 +31,32 @@ public class ProductDetailsPage {
     }
 
     // Locators
-    private By addToCart = By.xpath("//button[@data-testid='add-to-cart']");
+    private By addToCart = By.xpath("//button[@id='add-to-cart-button']");
     private By addToCartSuccessMesg = By.xpath("//div//span[text()='Product Added Sucessfully']");
 
     // Logics
     public boolean addTocart() {
-        try {
-            wait.until(ExpectedConditions.elementToBeClickable(addToCart)).click();
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                wait.until(ExpectedConditions.elementToBeClickable(addToCart)).click();
+                status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartSuccessMesg)).isDisplayed();
+                Utils.logStatus("User successfully added product to cart", (status ? "Passed" : "Failed"));
+                return status;
 
-            status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartSuccessMesg)).isDisplayed();
-            Utils.logStatus("User successfully added product to cart", (status ? "Passed" : "Failed"));
-            return status;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            } catch (StaleElementReferenceException ser) {
+                attempts++;
+                if (attempts >= 3) {
+                    ser.printStackTrace();
+                    return false;
+                }
+                // retry on stale element
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+        return false;
     }
 
 }

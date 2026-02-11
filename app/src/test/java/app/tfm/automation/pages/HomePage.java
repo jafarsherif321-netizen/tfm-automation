@@ -32,7 +32,7 @@ public class HomePage {
 
     // Locators
     private By searchBox = By.xpath("//input[@placeholder='Search Truly Free']");
-    private By addToCart = By.xpath("//button[@data-testid='add-to-cart']");
+    private By addToCart = By.xpath("//button[@id='add-to-cart-button']");
     private By profileBtn = By.xpath("//div[ @data-testid='profile-btn']");
     private By logoutBtn = By.xpath("//p[text()='Logout']");
     private By confirmLogout = By.xpath("//button[contains(@class,'logoutBtn') and contains(., 'Logout')]");
@@ -41,13 +41,15 @@ public class HomePage {
     // Logics
     public boolean searchProduct(String keyword, String productName) {
         try {
+            // utils.waitForPageToBeStable();
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).sendKeys(keyword, Keys.ENTER);
-            actions.pause(3000).perform();
+            // utils.waitForPageToBeStable();
 
-            By productElement = By.xpath("//h2[contains(@data-testid,'product-name') and contains( .,'"+productName+"')]");
+            By productElement = By
+                    .xpath("//h2[contains(@data-testid,'product-name') and contains( .,'" + productName + "')]");
             utils.clickOnElement(productElement);
-            actions.pause(3000).perform();
+          //  utils.waitForPageToBeStable();
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCart)).isDisplayed();
             Utils.logStatus("Search successful, navigated to product details page",
@@ -60,14 +62,14 @@ public class HomePage {
         }
     }
 
-    public boolean isUserLoggedIn(){
+    public boolean isUserLoggedIn() {
         try {
-
+            utils.waitForPageToBeStable();
             WebElement visibleElement = utils.waitForFirstVisibleElement(profileIcon, profileBtn);
             String visibleElementText = visibleElement.getAttribute("data-testid");
 
             return visibleElementText.equals("profile-btn");
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -78,20 +80,18 @@ public class HomePage {
         try {
 
             if (isUserLoggedIn()) {
-                WebElement profileBtnEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileBtn));
-                actions.moveToElement(profileBtnEle).perform();
-                utils.scrollIntoViewJS(logoutBtn);
 
-                WebElement logoutBtnEle = wait.until(ExpectedConditions.presenceOfElementLocated(logoutBtn));
+                utils.hoverUsingJS(profileBtn);
 
-                js.executeScript("arguments[0].click();", logoutBtnEle);
+                utils.clickOnEleByJS(logoutBtn);
 
                 wait.until(ExpectedConditions.elementToBeClickable(confirmLogout)).click();
+               // utils.waitForPageToBeStable();
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).isDisplayed();
 
                 Utils.logStatus("User successfully Logged out", (status ? "Passed" : "Failed"));
 
-            }else{
+            } else {
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).isDisplayed();
                 Utils.logStatus("Logout Skipped: Currently no user is logged-in", (status ? "Passed" : "Failed"));
             }

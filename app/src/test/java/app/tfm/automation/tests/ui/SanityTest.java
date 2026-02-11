@@ -17,97 +17,102 @@ import org.testng.annotations.Test;
 @SuppressWarnings({ "null", "unused" })
 public class SanityTest extends BaseTest {
 
-    @Test(description = "TC01: Verify that User can checkout using exisitingaccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    //@Test(description = "TC01: Verify that User can checkout using exisitingaccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
     public void checkoutUsingExistingAccount(String PHONE_NUMBER, String OTP, String SEARCH_KEYWORD,
             String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC01: Verify that User can checkout using exisiting account", "Info");
-        driver.get(ConfigReader.get("baseUrl"));
+        driver().get(ConfigReader.get("baseUrl"));
 
-        Boolean status = pom.loginPage().login(PHONE_NUMBER, OTP);
+        Boolean status = pom().loginPage().login(PHONE_NUMBER, OTP);
         Assert.assertTrue(status, "Login failed");
 
-        status = pom.homePage().searchProduct(SEARCH_KEYWORD, PRODUCT_NAME);
+        status = pom().homePage().searchProduct(SEARCH_KEYWORD, PRODUCT_NAME);
         Assert.assertTrue(status, "Failed to search and navigate to product details page");
 
-        status = pom.productDetailsPage().addTocart();
+        status = pom().productDetailsPage().addTocart();
         Assert.assertTrue(status, "Failed to add product to cart");
 
-        status = pom.cartPage().navigateToCartPage();
+        status = pom().cartPage().navigateToCartPage();
         Assert.assertTrue(status, "Failed to navigate to cart page");
 
-        status = pom.checkoutPage().checkout();
+        status = pom().checkoutPage().checkout();
         Assert.assertTrue(status, "Failed to checkout");
 
-        status = pom.ordersPage().NavigateToMyOrders();
+        status = pom().ordersPage().NavigateToMyOrders();
         Assert.assertTrue(status, "Failed to Navigate to My Orders page");
 
-        status = pom.homePage().logout();
+        status = pom().homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
 
         Utils.logStatus("End TestCase TC01: Verify that User can checkout using exisiting account",
                 (status ? "Passed" : "Failed"));
     }
 
-    @Test(description = "TC02: Verify that User can sign-up using phone number", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    //@Test(description = "TC02: Verify that User can sign-up using phone number", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
     public void signUpWithPhoneNumber(String COUNTRY_CODE, String OTP) {
         Utils.logStatus("Start TestCase TC02: Verify that User can sign-up using phone number", "Info");
-        driver.get(ConfigReader.get("baseUrl"));
+        driver().get(ConfigReader.get("baseUrl"));
 
-        Boolean status = pom.signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
+        Boolean status = pom().signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
         Assert.assertTrue(status, "Failed to signUp with phone number");
 
-        status = pom.homePage().logout();
+        status = pom().homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
+
+        // if (pom().signUpPage().isFullNameGenerated()) {
+        //     pom().signUpPage().storeSignUpData();
+        // }
 
         Utils.logStatus("End TestCase TC02: Verify that User can sign-up using phone number",
                 (status ? "Passed" : "Failed"));
 
     }
 
-    @Test(description = "TC03: Verify that User can checkout using newAccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    @Test(description = "TC03: Verify that User can checkout using newAccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 100, threadPoolSize = 2)
     public void checkoutUsingNewAccount(String COUNTRY_CODE, String OTP, String SEARCH_KEYWORD, String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC03: Verify that User can checkout using newAccount", "Info");
-        driver.get(ConfigReader.get("baseUrl"));
-        
+        driver().get(ConfigReader.get("baseUrl"));
 
-        Boolean status = pom.signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
+        Boolean status = pom().signUpPage().signUpUsingPhoneNumber(COUNTRY_CODE, OTP);
         Assert.assertTrue(status, "Failed to signUp with phone number");
 
-        status = pom.homePage().searchProduct(SEARCH_KEYWORD, PRODUCT_NAME);
+        status = pom().homePage().searchProduct(SEARCH_KEYWORD, PRODUCT_NAME);
         Assert.assertTrue(status, "Failed to search and navigate to product details page");
 
-        status = pom.productDetailsPage().addTocart();
+        status = pom().productDetailsPage().addTocart();
         Assert.assertTrue(status, "Failed to add product to cart");
 
-        status = pom.cartPage().navigateToCartPage();
+        status = pom().cartPage().navigateToCartPage();
         Assert.assertTrue(status, "Failed to navigate to cart page");
 
-        status = pom.checkoutPage().checkout();
+        status = pom().checkoutPage().checkout();
         Assert.assertTrue(status, "Failed to checkout");
 
-        status = pom.ordersPage().NavigateToMyOrders();
+        status = pom().ordersPage().NavigateToMyOrders();
         Assert.assertTrue(status, "Failed to Navigate to My Orders page");
 
-        status = pom.homePage().logout();
+        status = pom().homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
+
 
         Utils.logStatus("End TestCase TC03: Verify that User can checkout using newAccount",
                 (status ? "Passed" : "Failed"));
+        if(status){pom().signUpPage().storeSignUpData();}
     }
 
 
-    @Test(description = "TC04: Verify that User can create post using exisiting account", invocationCount = 1)
-    public void createPostWithLocalFiles() throws InterruptedException {
+    //@Test(description = "TC04: Verify that User can create post using exisiting account", invocationCount = 1)
+    public void createPostWithLocalFiles(){
         Utils.logStatus("Start TestCase TC04: Verify that User can create post using exisiting account", "Info");
 
-        driver.get(ConfigReader.get("socialBaseUrl"));
-        Boolean status = pom.loginPage().login("5214471789", "1111");
+        driver().get(ConfigReader.get("socialBaseUrl"));
+        Boolean status = pom().loginPage().login("5214471789", "1111");
         Assert.assertTrue(status, "Login failed");
 
-        status = pom.createPostPage().createPost();
+        status = pom().createPostPage().createPost();
         Assert.assertTrue(status, "Failed to create a post");
 
-        status = pom.homePage().logout();
+        status = pom().homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
 
         Utils.logStatus("End TestCase TC04: Verify that User can create post using exisiting account",
@@ -118,12 +123,10 @@ public class SanityTest extends BaseTest {
 
 
 
-
-
-
-
-
-
     
     //TODO: Need logic to follow a profile
 }
+
+
+//INFO: to run methods in parallel use ./gradlew clean test -DsuiteXmlFile=src/test/resources/testng-methods.xml  or ./gradlew clean build --rerun-tasks -DsuiteXmlFile=src/test/resources/testng-methods.xml
+

@@ -36,15 +36,12 @@ public class OrdersPage {
     // Logics
     public boolean NavigateToMyOrders() {
         try {
-            WebElement profileBtnEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileBtn));
-            actions.moveToElement(profileBtnEle).perform();
-            wait.until(ExpectedConditions.presenceOfElementLocated(MyOrders));
-            Thread.sleep(3000);
+            utils.hoverUsingJS(profileBtn);
 
-            utils.scrollIntoViewJS(MyOrders);
-            wait.until(ExpectedConditions.elementToBeClickable(MyOrders)).click();
+            utils.clickOnEleByJS(MyOrders);
+
             status = wait.until(ExpectedConditions.urlContains("/orders"));
-            Thread.sleep(5000);
+           // actions.pause(2000);
 
             Utils.logStatus("User successfully Navigated to My orders page", (status ? "Passed" : "Failed"));
             return status;

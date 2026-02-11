@@ -100,7 +100,7 @@ public class CreatePostPage {
     public String generateCaption() {
         String caption;
         int attempts = 0;
-        int maxAttempts = 10000; // safety limit to avoid infinite loop 
+        int maxAttempts = 6000; // safety limit to avoid infinite loop 
 
         do {
             String starter = STARTERS[random.nextInt(STARTERS.length)];
@@ -135,7 +135,7 @@ public class CreatePostPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(social)).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(plusBtn)).click();
         WebElement mediaInput = wait.until(ExpectedConditions.presenceOfElementLocated(mediaLocator));
-        js.executeScript("arguments[0].style.display='block';", mediaInput);
+        js.executeScript("arguments[0].style.display='block';", mediaInput); //unloack dom ele 
     
         String filePath0 = "C:\\Users\\3embed\\Videos\\merkaru\\app1.jpg";
         String filePath1 = "C:\\Users\\3embed\\Videos\\merkaru\\app2.jpg";
@@ -158,8 +158,6 @@ public class CreatePostPage {
         
         status = wait.until(ExpectedConditions.visibilityOfElementLocated(snackBar)).isDisplayed();
         wait.until(ExpectedConditions.visibilityOfElementLocated(postTab)).click();
-
-        Thread.sleep(2000);
 
         Utils.logStatus("User successfully created a post", (status ? "Passed" : "Failed"));
         return status;

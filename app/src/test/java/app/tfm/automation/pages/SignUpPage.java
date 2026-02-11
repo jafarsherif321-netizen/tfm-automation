@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Random;
+import java.util.UUID;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -114,7 +115,10 @@ public class SignUpPage {
 
             int fourthDigit = random.nextInt(8) + 2;
 
-            lastGeneratedPhoneNumber = randomAreaCode + fourthDigit + String.format("%06d", sixDigitNumber);
+            String sixDigits = String.valueOf(Math.abs(UUID.randomUUID().hashCode())).substring(0,6);
+
+            lastGeneratedPhoneNumber = randomAreaCode + fourthDigit + sixDigits; 
+            //String.format("%06d", sixDigitNumber);
             return lastGeneratedPhoneNumber;
 
         } catch (Exception e) {
@@ -180,6 +184,15 @@ public class SignUpPage {
         return email;
     }
 
+    public boolean isFullNameGenerated() {
+        try {
+            getLastGeneratedFullName();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
     public boolean signUpUsingPhoneNumber(String countryCode, String otp) {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(profileIcon)).click();
@@ -205,8 +218,7 @@ public class SignUpPage {
                 lastGeneratedPhoneNumber = generateUSNumber();
             }
 
-            System.out.println("lastgeneratedphonenumber: " + lastGeneratedPhoneNumber);
-
+            //System.out.println("lastgeneratedphonenumber: " + lastGeneratedPhoneNumber);
             utils.enterTextByCharActions(phoneNumberField, lastGeneratedPhoneNumber);
             wait.until(ExpectedConditions.visibilityOfElementLocated(checkBox)).click();
             wait.until(ExpectedConditions.elementToBeClickable(continueBtn)).click();
@@ -224,8 +236,8 @@ public class SignUpPage {
                 // System.out.println("lastname: "+lastName);
                 // System.out.println("fullname: "+fullName);
 
-                utils.enterTextByCharActions(firstNameField, firstName);
-                utils.enterTextByCharActions(lastNameField, lastName);
+                utils.sendKeys(firstNameField, firstName);
+                utils.sendKeys(lastNameField, lastName);
 
                 int maxAttempts = 3; // to handle whene email is already registered
                 boolean isEmailUnique = false;
@@ -255,17 +267,14 @@ public class SignUpPage {
                 String text = visibleEle.getText();
 
                 if (text.contains("Start Shopping & Saving")) { // new user
-                    wait.until(ExpectedConditions.elementToBeClickable(startShoppingBtn)).click();
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(startShoppingBtn)).click();
 
                     WebElement userNameEle = wait.until(ExpectedConditions.visibilityOfElementLocated(profileName));
                     // System.out.println("username: "+userNameEle.getText());
                     // System.out.println("fullname: "+fullName);
                     status = userNameEle.getText().contains(fullName);
                     Utils.logStatus("User successfully Signed-up using phone number", (status ? "Passed" : "Failed"));
-                    if (status) {
-                        storeSignUpData();
-                    }
-
+     
                 } else {
                     status = wait.until(ExpectedConditions.presenceOfElementLocated(alreadyRegisteredError))
                             .isDisplayed();
@@ -294,7 +303,7 @@ public class SignUpPage {
         }
     }
 
-    private void storeSignUpData() {
+    public void storeSignUpData() {
         try {
             LinkedHashMap<String, String> data = new LinkedHashMap<>();
 
@@ -306,9 +315,9 @@ public class SignUpPage {
             data.put("Email", email);
 
             // Sheet name = method name for easy mapping
-            ExcelWriter.writeData("SignUp Data", data);
+            status = ExcelWriter.writeData("SignUp Data", data);
 
-            Utils.logStatus("Signup data stored in Excel", "Info");
+            Utils.logStatus("Signup data stored in Excel", (status ? "Passed" : "Failed"));
 
         } catch (Exception e) {
             e.printStackTrace();

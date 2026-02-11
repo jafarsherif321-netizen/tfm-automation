@@ -3,6 +3,7 @@ package app.tfm.automation.pages;
 import java.time.Duration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -42,7 +43,7 @@ public class CheckoutPage {
     // Locators
     private By proceedToCheckOutBtn = By.xpath("//button[text()='Proceed to Checkout']");
     private By firstNameField = By.xpath("//input[@id='firstName']");
-    private By lastNaameField = By.xpath("//input[@id='lastName']");
+    private By lastNameField = By.xpath("//input[@id='lastName']");
     private By addressContainer = By.xpath("//div[contains(@class,'shipping-address')]");
     private By firstAddressLine = By.xpath("//input[@data-testid='address']");
     private By zipCodeField = By.xpath("//input[@id='zipCode']");
@@ -66,23 +67,27 @@ public class CheckoutPage {
     public boolean checkout() {
         try {
             wait.until(ExpectedConditions.elementToBeClickable(proceedToCheckOutBtn)).click();
+            utils.waitForPageToBeStable();
 
-            this.firstName = signUpPage.getLastGeneratedFirstName();
-            this.lastName = signUpPage.getLastGeneratedLastName();
-            this.fullName = signUpPage.getLastGeneratedFullName();
 
-            WebElement visibleEle = utils.waitForFirstVisibleElement(firstNameField, addressContainer);
+            if (utils.isElementVisible(firstNameField) && signUpPage.isFullNameGenerated()) { //new account without address & card
+                this.firstName = signUpPage.getLastGeneratedFirstName();
+                this.lastName = signUpPage.getLastGeneratedLastName();
+                this.fullName = signUpPage.getLastGeneratedFullName();
 
-            if (visibleEle.getTagName().equals("input")) {
-                utils.enterTextByCharActions(firstNameField, firstName);
-                utils.enterTextByCharActions(lastNaameField, lastName);
+                utils.sendKeys(firstNameField, firstName);
+                utils.sendKeys(lastNameField, lastName);
+                //utils.enterTextByCharActions(firstNameField, firstName);
+                //utils.enterTextByCharActions(lastNameField, lastName);
 
                 addressLine = "6261 US Highway 31 North";
                 zipcode = "49690";
 
                 utils.sendKeys(firstAddressLine, addressLine);
-                utils.clickOnEleByJS(zipCodeField);
-                utils.enterTextByCharActions(zipCodeField, zipcode);
+                WebElement ele = wait.until(ExpectedConditions.visibilityOfElementLocated(firstAddressLine));
+                ele.sendKeys(Keys.ENTER);
+                utils.sendKeysUsingActions(zipCodeField, zipcode);
+
                 wait.until(ExpectedConditions.elementToBeClickable(saveBtn)).click();
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(addressAddedMessage)).isDisplayed();
                 Utils.logStatus("Adding new address successful", (status ? "Passed" : "Failed"));
@@ -90,13 +95,14 @@ public class CheckoutPage {
                 utils.sendKeysInsideFrame(cardNumberFrame, cardNoField, "4242424242424242");
                 utils.sendKeysInsideFrame(cvcFrame, cvvNo, "541");
 
-                utils.sendKeys(expDate, "1130");
+                utils.sendKeys(expDate, "11/30");
                 utils.sendKeys(cardHolderName, fullName);
 
                 wait.until(ExpectedConditions.elementToBeClickable(placeOrderBtn));
                 WebElement placeOrderEle = utils.scrollIntoViewJS(placeOrderBtn);
-                actions.pause(1000).perform();
+               // actions.pause(1000).perform();
                 placeOrderEle.click();
+
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(cardAddedMessage)).isDisplayed();
                 Utils.logStatus("Adding new Card successful: ", (status ? "Passed" : "Failed"));
 
@@ -104,13 +110,14 @@ public class CheckoutPage {
                 wait.until(ExpectedConditions.elementToBeClickable(placeOrderBtn));
 
                 WebElement placeOrderEle = utils.scrollIntoViewJS(placeOrderBtn);
-                actions.pause(1800).perform();
+               // actions.pause(1800).perform();
                 placeOrderEle.click();
+              //  utils.waitForPageToBeStable();
 
             }
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(orderThanksElement)).isDisplayed();
-            actions.pause(2000).perform();
+           // actions.pause(2000).perform();
             Utils.logStatus("User successfully placed order", (status ? "Passed" : "Failed"));
             return status;
 

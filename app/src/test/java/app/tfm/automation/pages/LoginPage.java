@@ -40,7 +40,9 @@ public class LoginPage {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(loginBtn)).click();
             utils.enterTextByCharActions(phoneNumberField,phonenumber);
+
             wait.until(ExpectedConditions.visibilityOfElementLocated(continueBtn)).click();
+            //utils.sendKeys(otpField, otp);
             utils.enterTextByCharActions(otpField, otp);
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(userProfileBtn)).isDisplayed();

@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,7 +43,8 @@ public class Utils {
 
     public void sendKeysUsingJS(By locator, String value) throws Exception {
         try {
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            clickOnEleByJS(locator);
 
             js.executeScript("arguments[0].value = '';", element);
             js.executeScript("arguments[0].value = arguments[1];", element, value);
@@ -56,11 +58,12 @@ public class Utils {
 
     public void sendKeys(By locator, String value) throws Exception {
         try {
+            waitForPageToBeStable();
             WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 
-            element.click();
+            element.sendKeys(Keys.ENTER);
             element.clear();
-            actions.pause(Duration.ofMillis(2000)).perform();
+            // actions.pause(Duration.ofMillis(2000)).perform();
             element.sendKeys(value);
 
         } catch (Exception e) {
@@ -71,6 +74,7 @@ public class Utils {
 
     public void sendKeysUsingActions(By locator, String value) {
         try {
+            waitForPageToBeStable();
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 
             actions.moveToElement(element)
@@ -79,6 +83,7 @@ public class Utils {
                     .sendKeys("a")
                     .keyUp(Keys.CONTROL)
                     .sendKeys(Keys.DELETE)
+                    .pause(2000)
                     .sendKeys(value)
                     .perform();
 
@@ -90,10 +95,11 @@ public class Utils {
 
     public void enterTextByChar(By locator, String text) throws Exception {
         try {
+            waitForPageToBeStable();
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            element.click();
+            element.sendKeys(Keys.ENTER);
             element.clear();
-            actions.pause(Duration.ofMillis(1800)).perform();
+
             for (char c : text.toCharArray()) {
                 element.sendKeys(String.valueOf(c));
                 actions.pause(Duration.ofMillis(100));
@@ -108,11 +114,19 @@ public class Utils {
 
     public void enterTextByCharActions(By locator, String text) throws Exception {
         try {
+            waitForPageToBeStable();
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            actions.moveToElement(element).click().pause(Duration.ofMillis(2500)).perform();
+            actions.moveToElement(element)
+                    .click()
+                    .keyDown(Keys.CONTROL)
+                    .sendKeys("a")
+                    .keyUp(Keys.CONTROL)
+                    .sendKeys(Keys.DELETE)
+                    .pause(2000)
+                    .perform();
 
             for (char c : text.toCharArray()) {
-                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(200));
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(300));
             }
 
             actions.perform();
@@ -136,8 +150,8 @@ public class Utils {
 
     public WebElement scrollIntoViewJS(By locator) {
         try {
-            // Wait until the element is present and visible
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            // Wait until the element is present
+            WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
 
             // Scroll the element into view using JavaScript
             js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
@@ -147,6 +161,24 @@ public class Utils {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    public void hoverUsingJS(By locator) {
+
+        try {
+            WebElement element = wait.until(
+                    ExpectedConditions.presenceOfElementLocated(locator));
+            String hoverScript = "var event = new MouseEvent('mouseover', {" +
+                    "view: window, bubbles: true, cancelable: true});" +
+                    "arguments[0].dispatchEvent(event);";
+
+            js.executeScript(hoverScript, element);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+
     }
 
     public void switchToFrame(By frameLocator) {
@@ -164,7 +196,6 @@ public class Utils {
 
         driver.switchTo().defaultContent();
     }
-
 
     public static void logStatus(String description, String status) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -254,6 +285,7 @@ public class Utils {
     public boolean isElementVisible(By locator) {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+            actions.pause(2000).perform();
             return shortWait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
 
         } catch (Exception e) {
@@ -263,22 +295,65 @@ public class Utils {
     }
 
     public void clickOnElement(By locator) {
-        try {
-            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
-            element.click();
-        } catch (Exception e) {
-            System.err.println("Normal click failed, trying JS click for: " + locator);
-            clickOnEleByJS(locator); // fallback
+        final int maxStaleRetries = 3;
+        waitForPageToBeStable();
+        for (int attempt = 1; attempt <= maxStaleRetries; attempt++) {
+            try {
+                WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+                element.click();
+                return;
+            } catch (StaleElementReferenceException stale) {
+                logStatus(
+                        "Stale element while clicking ON" + locator + " (attempt " + attempt + "/" + maxStaleRetries + ")",
+                        "Warning");
+                if (attempt == maxStaleRetries) {
+                    logStatus("Click failed after stale element retries, trying JS click for: " + locator, "Failed");
+                    clickOnEleByJS(locator); // fallback
+                    return;
+                }
+            } catch (Exception e) {
+                logStatus("Normal click failed, trying JS click for: " + locator, "Failed");
+                clickOnEleByJS(locator); // fallback
+                return;
+            }
         }
     }
 
     public void clickOnEleByJS(By locator) {
         try {
             WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            scrollIntoViewJS(locator); //
             js.executeScript("arguments[0].click();", element);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("JS Click also failed for: " + locator);
+        }
+    }
+
+    public void waitForPageToBeStable() {
+        try {
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            // Wait for DOM to fully load
+            shortWait.until(d -> ((JavascriptExecutor) d)
+                    .executeScript("return document.readyState")
+                    .equals("complete"));
+
+            // Wait for overlays / backdrops / loaders to disappear
+            By overlayXpath = By.xpath(
+                    "//*[contains(@class,'MuiBackdrop-root') " +
+                            "or contains(@class,'MuiDialog-container') " +
+                            "or contains(@class,'loading') " +
+                            "or contains(@class,'spinner') " +
+                            "or contains(@class,'overlay')]");
+
+            shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+            shortWait.until(ExpectedConditions.invisibilityOfElementLocated(overlayXpath));
+
+        } catch (Exception e) {
+            // Do not fail test because of wait — just log
+            // System.out.println("Page stability wait skipped: " + e.getMessage());
         }
     }
 

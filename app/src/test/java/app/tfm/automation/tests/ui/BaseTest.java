@@ -15,33 +15,44 @@ import app.tfm.automation.utils.Utils;
 @SuppressWarnings("unused")
 public abstract class BaseTest {
 
-    protected WebDriver driver;
-    PageObjectManager pom;
+    private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+    private static final ThreadLocal<PageObjectManager> tlPom = new ThreadLocal<>();
 
     @Parameters({ "browser" })
-    @BeforeTest(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)  //change it back to BeforeTest - using method for parallel execution
     public void setUp(String browser) {
         Utils.logStatus("Starting driver", "Initialized");
-        // Initialize driver once per <test> in testng.xml
+        // Initialize driver once per <test>/method in testng.xml
         DriverManager.initDriver(browser);
-        driver = DriverManager.getDriver();
+        WebDriver driver = DriverManager.getDriver();
+        tlDriver.set(driver);
 
         // Clean session
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
 
         // Initialize PageObjectManager
-        pom = new PageObjectManager(driver);
+        tlPom.set(new PageObjectManager(driver));
 
         //Clear old screenshots
         Utils.clearOldScreenshots(true);
 
     }
 
-    //@AfterTest(alwaysRun = true)
+    @AfterMethod(alwaysRun = true) //change it back to BeforeTest - using method for parallel execution
     public void tearDown() {
         Utils.logStatus("Quiting driver", "Success");
         // Quit driver after the suite/test block
         DriverManager.quitDriver();
+        tlPom.remove();
+        tlDriver.remove();
+    }
+
+    protected WebDriver driver() {
+        return tlDriver.get();
+    }
+
+    protected PageObjectManager pom() {
+        return tlPom.get();
     }
 }

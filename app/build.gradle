@@ -41,8 +41,12 @@ java {
 
 test {
     useTestNG() {
-        // Specif testng.xml
-        suites 'src/test/resources/testng.xml'
+        // Specify TestNG suite file (override with -DsuiteXmlFile=path)
+        ////INFO: to run methods in parallel use ./gradlew clean test -DsuiteXmlFile=src/test/resources/testng-methods.xml  
+        //or ./gradlew clean build --rerun-tasks -DsuiteXmlFile=src/test/resources/testng-methods.xml
+
+        def suiteFile = System.getProperty('suiteXmlFile', 'src/test/resources/testng.xml')
+        suites suiteFile
         // Output folder for TestNG reports
         outputDirectory = file("test-execution-result")
 
