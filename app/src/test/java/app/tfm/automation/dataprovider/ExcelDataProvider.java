@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ExcelDataProvider {
 
-    @DataProvider(name = "excel-data", parallel = true)
+    @DataProvider(name = "excel-data", parallel = false)
     public Object[][] getData(Method m) throws IOException {
         List<List<String>> outputList = new ArrayList<>();
 

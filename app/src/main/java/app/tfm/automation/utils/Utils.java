@@ -122,11 +122,11 @@ public class Utils {
                     .sendKeys("a")
                     .keyUp(Keys.CONTROL)
                     .sendKeys(Keys.DELETE)
-                    .pause(2000)
+                    .pause(3000)
                     .perform();
 
             for (char c : text.toCharArray()) {
-                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(300));
+                actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(350));
             }
 
             actions.perform();
@@ -347,7 +347,7 @@ public class Utils {
                             "or contains(@class,'spinner') " +
                             "or contains(@class,'overlay')]");
 
-            shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            shortWait = new WebDriverWait(driver, Duration.ofSeconds(2));
 
             shortWait.until(ExpectedConditions.invisibilityOfElementLocated(overlayXpath));
 
