@@ -40,6 +40,7 @@ java {
 
 
 test {
+    maxParallelForks = 1  // parallel execution of test classes, set to 1 to run sequentially
     useTestNG() {
         // Specify TestNG suite file (override with -DsuiteXmlFile=path)
         ////INFO: to run methods in parallel use ./gradlew clean test -DsuiteXmlFile=src/test/resources/testng-methods.xml  

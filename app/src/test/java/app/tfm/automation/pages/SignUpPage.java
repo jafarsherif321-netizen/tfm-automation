@@ -282,6 +282,7 @@ public class SignUpPage {
                     Utils.logStatus("Signup blocked: Phone number already registered. Error shown: '" + text + "' ",
                             (status ? "Passed" : "Failed"));
                     driver.navigate().refresh();
+                    status = false;//nemovemthis line after done creating post 
                 }
 
             } else if (testId.equals("profile-btn")) { // existing user - auto logged in

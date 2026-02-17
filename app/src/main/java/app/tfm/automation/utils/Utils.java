@@ -47,7 +47,18 @@ public class Utils {
             clickOnEleByJS(locator);
 
             js.executeScript("arguments[0].value = '';", element);
-            js.executeScript("arguments[0].value = arguments[1];", element, value);
+            actions.pause(Duration.ofMillis(2000)).perform();
+            // js.executeScript("arguments[0].value = arguments[1];", element, value);
+
+            js.executeScript(
+                    "arguments[0].focus();" +
+                            "arguments[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));" +
+                            "arguments[0].value = arguments[1];" +
+                            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));" +
+                            "arguments[0].dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));" +
+                            "arguments[0].dispatchEvent(new Event('change', { bubbles: true }));",
+                    element,
+                    value);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,14 +127,17 @@ public class Utils {
         try {
             waitForPageToBeStable();
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            actions.moveToElement(element)
-                    .click()
-                    .keyDown(Keys.CONTROL)
-                    .sendKeys("a")
-                    .keyUp(Keys.CONTROL)
-                    .sendKeys(Keys.DELETE)
-                    .pause(3000)
-                    .perform();
+            // actions.moveToElement(element)
+            //         .click().pause(Duration.ofMillis(200)).perform();
+            // actions.keyDown(Keys.CONTROL)
+            //         .sendKeys("a")
+            //         .keyUp(Keys.CONTROL)
+            //         .sendKeys(Keys.DELETE)
+            //         .pause(3000)
+            //         .perform();
+            element.click();
+            element.clear();
+            actions.pause(Duration.ofMillis(3000)).perform();
 
             for (char c : text.toCharArray()) {
                 actions.sendKeys(String.valueOf(c)).pause(Duration.ofMillis(350));
@@ -304,7 +318,8 @@ public class Utils {
                 return;
             } catch (StaleElementReferenceException stale) {
                 logStatus(
-                        "Stale element while clicking ON" + locator + " (attempt " + attempt + "/" + maxStaleRetries + ")",
+                        "Stale element while clicking ON" + locator + " (attempt " + attempt + "/" + maxStaleRetries
+                                + ")",
                         "Warning");
                 if (attempt == maxStaleRetries) {
                     logStatus("Click failed after stale element retries, trying JS click for: " + locator, "Failed");

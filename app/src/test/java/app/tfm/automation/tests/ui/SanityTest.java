@@ -1,5 +1,7 @@
 package app.tfm.automation.tests.ui;
 
+import app.tfm.automation.dataprovider.CreatePostDataProvider;
+import app.tfm.automation.dataprovider.CreatePostExcelManager;
 import app.tfm.automation.dataprovider.ExcelDataProvider;
 import app.tfm.automation.utils.Utils;
 import app.tfm.automation.config.ConfigReader;
@@ -17,7 +19,8 @@ import org.testng.annotations.Test;
 @SuppressWarnings({ "null", "unused" })
 public class SanityTest extends BaseTest {
 
-    @Test(description = "TC01: Verify that User can checkout using exisitingaccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    @Test(description = "TC01: Verify that User can checkout using exisitingaccount", dataProvider = "excel-data", dataProviderClass =
+    ExcelDataProvider.class, invocationCount = 1)
     public void checkoutUsingExistingAccount(String PHONE_NUMBER, String OTP, String SEARCH_KEYWORD,
             String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC01: Verify that User can checkout using exisiting account", "Info");
@@ -48,7 +51,8 @@ public class SanityTest extends BaseTest {
                 (status ? "Passed" : "Failed"));
     }
 
-    @Test(description = "TC02: Verify that User can sign-up using phone number", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
+    @Test(description = "TC02: Verify that User can sign-up using phone number", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class,
+    invocationCount = 1)
     public void signUpWithPhoneNumber(String COUNTRY_CODE, String OTP) {
         Utils.logStatus("Start TestCase TC02: Verify that User can sign-up using phone number", "Info");
         driver().get(ConfigReader.get("baseUrl"));
@@ -59,16 +63,17 @@ public class SanityTest extends BaseTest {
         status = pom().homePage().logout();
         Assert.assertTrue(status, "Logout Failed");
 
-        // if (pom().signUpPage().isFullNameGenerated()) {
-        // pom().signUpPage().storeSignUpData();
-        // }
+        if (pom().signUpPage().isFullNameGenerated()) {
+        pom().signUpPage().storeSignUpData();
+        }
 
         Utils.logStatus("End TestCase TC02: Verify that User can sign-up using phone number",
                 (status ? "Passed" : "Failed"));
 
     }
 
-    @Test(description = "TC03: Verify that User can checkout using newAccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1, threadPoolSize = 2)
+    @Test(description = "TC03: Verify that User can checkout using newAccount", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class,
+    invocationCount = 1)  //, threadPoolSize = 2
     public void checkoutUsingNewAccount(String COUNTRY_CODE, String OTP, String SEARCH_KEYWORD, String PRODUCT_NAME) {
         Utils.logStatus("Start TestCase TC03: Verify that User can checkout using newAccount", "Info");
         driver().get(ConfigReader.get("baseUrl"));
@@ -101,34 +106,33 @@ public class SanityTest extends BaseTest {
         }
     }
 
-    // @Test(description = "TC04: Verify that User can create posts using existing
-    // account", dataProvider = "excel-data", dataProviderClass =
-    // ExcelDataProvider.class, invocationCount = 1)
+   @Test(description = "TC04: Verify that User can create posts using existing account", dataProvider = "excel-data", dataProviderClass = ExcelDataProvider.class, invocationCount = 1)
     public void createPostWithLocalFiles(String PHONE_NUMBER, String OTP) {
-        Utils.logStatus("Start TestCase TC04: Verify that User can create post using exisiting account", "Info");
+    Utils.logStatus("Start TestCase TC04: Verify that User can create post using exisiting account", "Info");
 
-        driver().get(ConfigReader.get("socialBaseUrl"));
-        Boolean status = pom().loginPage().login(PHONE_NUMBER, OTP);
-        Assert.assertTrue(status, "Login failed");
+    driver().get(ConfigReader.get("socialBaseUrl"));
+    Boolean status = pom().loginPage().login(PHONE_NUMBER, OTP);
+    Assert.assertTrue(status, "Login failed");
 
-        for (int i = 0; i < 3; i++) {
-            boolean isMultiple = (i + 1) % 2 == 0; // for 2nd iteration it will upload multiple media
-            status = pom().createPostPage().createPost(isMultiple);
-            Assert.assertTrue(status, "Failed to create a post");
-
-        }
-
-        status = pom().homePage().logout();
-        Assert.assertTrue(status, "Logout Failed");
-
-        Utils.logStatus("End TestCase TC04: Verify that User can create post using exisiting account",
-                (status ? "Passed" : "Failed"));
+    for (int i = 0; i < 3; i++) {
+    boolean isMultiple = (i + 1) % 2 == 0; // for 2nd iteration it will upload multiple media
+    status = pom().createPostPage().createPost(isMultiple);
+    Assert.assertTrue(status, "Failed to create a post");
 
     }
 
-    // TODO: Need logic to follow a profile
+    status = pom().homePage().logout();
+    Assert.assertTrue(status, "Logout Failed");
+
+    Utils.logStatus("End TestCase TC04: Verify that User can create post using exisiting account",
+    (status ? "Passed" : "Failed"));
+
+    }
+
 }
 
-// INFO: to run methods in parallel use ./gradlew clean test
-// -DsuiteXmlFile=src/test/resources/testng-methods.xml or ./gradlew clean build
-// --rerun-tasks -DsuiteXmlFile=src/test/resources/testng-methods.xml
+
+
+ // TODO: Need logic to follow a user profile
+
+
