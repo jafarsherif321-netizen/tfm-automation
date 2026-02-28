@@ -41,7 +41,6 @@ public class OrdersPage {
             utils.clickOnEleByJS(MyOrders);
 
             status = wait.until(ExpectedConditions.urlContains("/orders"));
-           // actions.pause(2000);
 
             Utils.logStatus("User successfully Navigated to My orders page", (status ? "Passed" : "Failed"));
             return status;

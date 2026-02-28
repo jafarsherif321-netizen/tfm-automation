@@ -41,6 +41,7 @@ public class CreatePostPage {
 
     // Locators
     private By social = By.xpath("//span[text()='Social']");
+    private By following = By.xpath("(//span[contains(@class,'tab') and contains(.,'Following')])[2]");
     private By plusBtn = By.xpath("//span[@data-testid='create-post-button']");
     private By mediaLocator = By.xpath("//input[@type='file' and @multiple]");
     private By continueBtn = By.xpath("//div[contains(@class, 'desktop-continue')]//button[text()='Continue']");
@@ -149,6 +150,7 @@ public class CreatePostPage {
             }
 
             wait.until(ExpectedConditions.visibilityOfElementLocated(social)).click();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(following)).click(); 
             wait.until(ExpectedConditions.visibilityOfElementLocated(plusBtn)).click();
 
             WebElement mediaInput = wait.until(ExpectedConditions.presenceOfElementLocated(mediaLocator));

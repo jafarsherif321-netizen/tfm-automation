@@ -94,7 +94,7 @@ public class Utils {
                     .sendKeys("a")
                     .keyUp(Keys.CONTROL)
                     .sendKeys(Keys.DELETE)
-                    .pause(2000)
+                    .pause(Duration.ofMillis(2000))
                     .sendKeys(value)
                     .perform();
 
@@ -299,7 +299,7 @@ public class Utils {
     public boolean isElementVisible(By locator) {
         try {
             WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-            actions.pause(2000).perform();
+           // actions.pause(2000).perform();
             return shortWait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
 
         } catch (Exception e) {
@@ -347,7 +347,7 @@ public class Utils {
 
     public void waitForPageToBeStable() {
         try {
-            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(15));
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
             // Wait for DOM to fully load
             shortWait.until(d -> ((JavascriptExecutor) d)

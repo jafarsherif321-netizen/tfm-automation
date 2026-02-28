@@ -252,6 +252,7 @@ public class SignUpPage {
                         isEmailUnique = true;
                         break;
                     }
+                    
                     Utils.logStatus("Email already registered. Retrying with new email", "Attempt: " + attempt);
 
                 }

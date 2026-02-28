@@ -42,6 +42,9 @@ public class ProductDetailsPage {
                 wait.until(ExpectedConditions.elementToBeClickable(addToCart)).click();
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCartSuccessMesg)).isDisplayed();
                 Utils.logStatus("User successfully added product to cart", (status ? "Passed" : "Failed"));
+                
+                Thread.sleep(3000);
+
                 return status;
 
             } catch (StaleElementReferenceException ser) {

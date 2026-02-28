@@ -77,8 +77,6 @@ public class CheckoutPage {
 
                 utils.sendKeys(firstNameField, firstName);
                 utils.sendKeys(lastNameField, lastName);
-                //utils.enterTextByCharActions(firstNameField, firstName);
-                //utils.enterTextByCharActions(lastNameField, lastName);
 
                 addressLine = "6261 US Highway 31 North";
                 zipcode = "49690";
@@ -87,8 +85,10 @@ public class CheckoutPage {
                 WebElement ele = wait.until(ExpectedConditions.visibilityOfElementLocated(firstAddressLine));
                 ele.sendKeys(Keys.ENTER);
                 utils.sendKeysUsingActions(zipCodeField, zipcode);
-
                 wait.until(ExpectedConditions.elementToBeClickable(saveBtn)).click();
+
+                Thread.sleep(3000);
+
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(addressAddedMessage)).isDisplayed();
                 Utils.logStatus("Adding new address successful", (status ? "Passed" : "Failed"));
 
@@ -100,16 +100,18 @@ public class CheckoutPage {
 
                 wait.until(ExpectedConditions.elementToBeClickable(placeOrderBtn));
                 WebElement placeOrderEle = utils.scrollIntoViewJS(placeOrderBtn);
-               // actions.pause(1000).perform();
+
+                Thread.sleep(3000);
+
                 placeOrderEle.click();
 
                 status = wait.until(ExpectedConditions.visibilityOfElementLocated(cardAddedMessage)).isDisplayed();
                 Utils.logStatus("Adding new Card successful: ", (status ? "Passed" : "Failed"));
 
-            } else {
+            } else {  //if address and card details are already present
                 wait.until(ExpectedConditions.elementToBeClickable(placeOrderBtn));
 
-                WebElement placeOrderEle = utils.scrollIntoViewJS(placeOrderBtn);
+                WebElement placeOrderEle = utils.scrollIntoViewJS(placeOrderBtn);   
                // actions.pause(1800).perform();
                 placeOrderEle.click();
               //  utils.waitForPageToBeStable();
@@ -117,7 +119,6 @@ public class CheckoutPage {
             }
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(orderThanksElement)).isDisplayed();
-           // actions.pause(2000).perform();
             Utils.logStatus("User successfully placed order", (status ? "Passed" : "Failed"));
             return status;
 

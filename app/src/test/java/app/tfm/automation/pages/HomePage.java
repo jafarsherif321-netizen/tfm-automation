@@ -41,15 +41,18 @@ public class HomePage {
     // Logics
     public boolean searchProduct(String keyword, String productName) {
         try {
-            // utils.waitForPageToBeStable();
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(searchBox)).sendKeys(keyword, Keys.ENTER);
-            // utils.waitForPageToBeStable();
+
+            utils.waitForPageToBeStable();
+
+            //Thread.sleep(3000);
 
             By productElement = By
                     .xpath("//h2[contains(@data-testid,'product-name') and contains( .,'" + productName + "')]");
+
             utils.clickOnElement(productElement);
-          //  utils.waitForPageToBeStable();
+          
 
             status = wait.until(ExpectedConditions.visibilityOfElementLocated(addToCart)).isDisplayed();
             Utils.logStatus("Search successful, navigated to product details page",
